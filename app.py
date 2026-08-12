@@ -1,5 +1,7 @@
 import streamlit as st
 from groq import Groq
+import json
+import uuid
 
 # Page configuration
 st.set_page_config(
@@ -122,7 +124,7 @@ with tab_input:
     # Action row
     action_col, status_col = st.columns([1, 3])
     with action_col:
-        analyze = st.button("🚀 Analyze & Fix My Code")
+        analyze = st.button("🚀 Diagnose & Fix", help="Diagnose and fix my code")
 
     with status_col:
         st.markdown("<div class='small-muted'>Tip: Paste the entire error or traceback (including file and line numbers) for a more precise fix.</div>", unsafe_allow_html=True)
@@ -144,7 +146,7 @@ if analyze:
     if not broken_code_input or not broken_code_input.strip():
         st.warning("Please paste your code before running the analyzer.")
     else:
-        with st.spinner("🧠 AI Agent diagnosing your script..."):
+        with st.spinner("🧠 Diagnosing — generating a clear fix..."):
             try:
                 system_instructions = (
                     "You are an expert and encouraging computer science tutor. "
@@ -215,11 +217,44 @@ if analyze:
                         explanation = before
 
                 if explanation:
-                    st.markdown(f"**Explanation:** {explanation}")
+                    st.markdown(f"**Explanation (plain language):** {explanation}")
 
                 if fixed_code:
-                    st.markdown("**Fixed Code (ready to copy):**")
-                    st.code(fixed_code, language='python')
+                    st.markdown("**Fixed code (copy & run):**")
+                    # Download + Copy controls
+                    dl_col, copy_col, code_col = st.columns([0.6, 0.6, 6])
+                    with dl_col:
+                        st.download_button(
+                            label="📥 Download",
+                            data=fixed_code,
+                            file_name="fixed_code.py",
+                            mime="text/plain",
+                        )
+                    with copy_col:
+                        # best-effort HTML+JS copy button; falls back to manual selection below
+                        copy_id = "copy-btn-" + uuid.uuid4().hex
+                        copy_html = f"""
+                        <button id='{copy_id}' style='background:linear-gradient(90deg,#FF6B6B,#FF9A9A);color:white;border:none;border-radius:8px;padding:6px 10px;cursor:pointer'>📋 Copy</button>
+                        <script>
+                        const btn = document.getElementById('{copy_id}');
+                        if (btn) {{
+                          btn.addEventListener('click', async () => {{
+                            try {{
+                              await navigator.clipboard.writeText({json.dumps(fixed_code)});
+                              const old = btn.innerText;
+                              btn.innerText = '✅ Copied';
+                              setTimeout(()=>btn.innerText = '📋 Copy', 1500);
+                            }} catch(e) {{
+                              btn.innerText = '❌ Copy failed';
+                              setTimeout(()=>btn.innerText = '📋 Copy',1500);
+                            }}
+                          }});
+                        }}
+                        </script>
+                        """
+                        st.markdown(copy_html, unsafe_allow_html=True)
+                    with code_col:
+                        st.code(fixed_code, language='python')
                 else:
                     st.markdown("**Model output:**")
                     st.markdown(f"<div class='output-code'>{response_text}</div>", unsafe_allow_html=True)
