@@ -148,7 +148,6 @@ with st.container():
             unsafe_allow_html=True,
         )
     with col2:
-        # Polished multi-line header
         st.markdown(
             """
             <div class='header-left'>
@@ -271,7 +270,6 @@ if analyze:
 
                 if fixed_code:
                     st.markdown("**Corrected Code:**")
-                    # Stylized action buttons inside the output card
                     dl_col, copy_col, empty_col = st.columns([1, 1, 4])
                     
                     with dl_col:
@@ -284,7 +282,6 @@ if analyze:
                         )
                     with copy_col:
                         copy_id = "copy-btn-" + uuid.uuid4().hex
-                        # Premium copying button visual language
                         copy_html = f"""
                         <button id='{copy_id}' style='background:linear-gradient(135deg,#7c7fed,#f472b6);color:white;border:none;border-radius:14px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:Inter;letter-spacing:-0.02em;transition:all 0.3s ease;'>📋 Copy Code</button>
                         <script>
@@ -295,13 +292,13 @@ if analyze:
                               await navigator.clipboard.writeText({json.dumps(fixed_code)});
                               btn.innerText = '✅ Copied!';
                               btn.style.boxShadow = '0 0 10px #7c7fed';
-                              setTimeout(()=>{
+                              setTimeout(() => {{
                                   btn.innerText = '📋 Copy Code';
                                   btn.style.boxShadow = 'none';
-                              }, 2000);
+                              }}, 2000);
                             }} catch(e) {{
                               btn.innerText = '❌ Failed';
-                              setTimeout(()=>btn.innerText = '📋 Copy Code', 2000);
+                              setTimeout(() => btn.innerText = '📋 Copy Code', 2000);
                             }}
                           }});
                         }}
@@ -309,7 +306,6 @@ if analyze:
                         """
                         st.markdown(copy_html, unsafe_allow_html=True)
                     
-                    # Ensure the language here is Python or another defined style
                     st.code(fixed_code, language='python')
                 else:
                     st.markdown("**Model Output:**")
