@@ -606,5 +606,7 @@ with right_col:
             
             st.rerun()
 
-# ---------- Footer ----------
-st.markdown("<div class='footer'>CRAFTED WITH 💡 BY AN 18‑YEAR‑OLD FOUNDER • EDUFIX AI STUDIO V4.0 PRO</div>", unsafe_allow_html=True)
+# --------- Footer ---------
+st.markdown("<div class='footer'>CRAFTED WITH 💡 BY AN 18.YEAR.OLD FOUNDER • EDUFIX AI STUDIO V4.0 PRO</div>", unsafe_allow_html=True)
+
+st.markdown("<p style='text-align: center;'><a href='https://discord.gg' target='_blank' style='color: #FF4B4B; text-decoration: none; font-weight: bold;'>💬 Join the Official EduFix Discord Community</a></p>", unsafe_allow_html=True)
