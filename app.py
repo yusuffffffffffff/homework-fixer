@@ -5,8 +5,8 @@ import uuid
 
 # Page configuration - Wide workspace layout
 st.set_page_config(
-    page_title="EduFix AI | Ultimate CS Studio",
-    page_icon="🎓",
+    page_title="EduFix AI | Ultimate CS Studio v4.0",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -15,18 +15,19 @@ st.set_page_config(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ---------- Custom CSS for Premium Visual Enhancements ----------
+# ---------- Custom CSS for Ultra-Premium Cyber-Visuals ----------
 CUSTOM_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg-dark: #030408;
-  --glass-bg: rgba(15, 20, 35, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.08);
+  --bg-dark: #020408;
+  --glass-bg: rgba(10, 15, 30, 0.75);
+  --glass-border: rgba(99, 102, 241, 0.2);
   --primary: #6366f1;
   --accent: #ec4899;
   --cyan: #06b6d4;
-  --glow: rgba(99, 102, 241, 0.35);
+  --glow-primary: rgba(99, 102, 241, 0.45);
+  --glow-cyan: rgba(6, 182, 212, 0.45);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
 }
@@ -39,31 +40,32 @@ html, body, [class*="css"] {
 
 /* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #020408;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(var(--primary), var(--cyan));
     border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--accent);
 }
 
-/* Animated Cosmic Background */
-@keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* Cyber-Grid Animated Background */
+@keyframes cyberGridMove {
+    0% { background-position: 0px 0px, 0% 50%; }
+    100% { background-position: 40px 40px, 100% 50%; }
 }
 
 [data-testid="stAppViewContainer"] {
-  background: linear-gradient(-45deg, #02040a, #0f172a, #1e1b4b, #2e1065, #02040a);
-  background-size: 400% 400%;
-  animation: gradientMove 25s ease infinite;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+    linear-gradient(-45deg, #02040a, #0b0f19, #130f26, #1e1136, #02040a);
+  background-size: 100% 100%, 400% 400%;
+  animation: cyberGridMove 20s ease infinite;
   color: var(--text-main);
 }
 
@@ -77,45 +79,45 @@ h1, h2, h3, h4 {
     letter-spacing: -0.03em !important;
 }
 
-/* Directly style Streamlit Tab Panels as Glass Cards */
+/* Glassmorphism Tab Panels */
 [data-testid="stTabPanel"] {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 24px;
-  border-radius: 0px 0px 20px 20px;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  padding: 28px;
+  border-radius: 0px 0px 24px 24px;
   border: 1px solid var(--glass-border);
   border-top: none;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   margin-bottom: 20px;
 }
 
 /* Tab Bar Navigation */
 [data-testid="stTabs"] [data-baseweb="tab-list"] {
-  gap: 8px;
-  background: rgba(10, 14, 26, 0.7);
-  padding: 8px;
-  border-radius: 16px 16px 0px 0px;
+  gap: 6px;
+  background: rgba(5, 8, 18, 0.85);
+  padding: 10px;
+  border-radius: 20px 20px 0px 0px;
   border: 1px solid var(--glass-border);
   border-bottom: none;
 }
 
 [data-testid="stTabs"] [data-baseweb="tab"] {
-  height: 44px;
-  border-radius: 10px;
+  height: 48px;
+  border-radius: 12px;
   color: var(--text-muted) !important;
   font-weight: 600 !important;
   font-size: 14px !important;
   border: none !important;
-  padding: 0px 24px !important;
-  transition: all 0.3s ease !important;
+  padding: 0px 28px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 [data-testid="stTabs"] [aria-selected="true"] {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.3)) !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(6, 182, 212, 0.4)) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 0 25px var(--glow-primary) !important;
 }
 
 /* Header & Status Banner */
@@ -123,146 +125,156 @@ h1, h2, h3, h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0 25px 0;
-  border-bottom: 1px solid var(--glass-border);
-  margin-bottom: 25px;
+  padding: 15px 0 25px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 30px;
 }
 
 .brand-title {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .logo-badge {
-  background: linear-gradient(135deg, var(--primary), var(--cyan));
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  box-shadow: 0 8px 30px var(--glow);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 32px;
+  box-shadow: 0 0 35px var(--glow-primary);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .status-badge {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
   color: #34d399;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 30px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  backdrop-filter: blur(10px);
+  gap: 10px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(52, 211, 153, 0.2);
 }
 
 .pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   background-color: #34d399;
   border-radius: 50%;
-  box-shadow: 0 0 10px #34d399;
-  animation: pulse 2s infinite;
+  box-shadow: 0 0 12px #34d399;
+  animation: pulse 1.8s infinite;
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
-  70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.8); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
 }
 
-/* Premium Chat Bubbles */
+/* Floating Glass Chat Bubbles */
 [data-testid="stChatMessage"] {
-    background: rgba(20, 25, 40, 0.5) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-radius: 16px !important;
-    padding: 16px !important;
-    backdrop-filter: blur(12px) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-    margin-bottom: 15px !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 18px !important;
+    padding: 18px !important;
+    backdrop-filter: blur(16px) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    margin-bottom: 16px !important;
 }
 
-/* Glowing Pulsing Action Button */
-@keyframes buttonGlow {
-    0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
-    50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.7); }
-    100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+/* Hyper-Glowing Action Button */
+@keyframes buttonBreath {
+    0% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2); }
+    50% { box-shadow: 0 0 45px rgba(236, 72, 153, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.4); }
+    100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.2); }
 }
 
 .stButton>button {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
   color: white !important; 
-  border: 1px solid rgba(255, 255, 255, 0.1) !important; 
-  padding: 14px 28px !important; 
-  font-weight: 700 !important; 
+  border: 1px solid rgba(255, 255, 255, 0.25) !important; 
+  padding: 16px 28px !important; 
+  font-weight: 800 !important; 
   font-size: 16px !important;
-  border-radius: 14px !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  animation: buttonGlow 3s infinite alternate !important;
+  border-radius: 16px !important;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation: buttonBreath 3.5s infinite alternate !important;
 }
 
 .stButton>button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 12px 40px rgba(236, 72, 153, 0.6) !important;
+    transform: translateY(-3px) scale(1.01) !important;
+    box-shadow: 0 15px 50px rgba(236, 72, 153, 0.8) !important;
 }
 
-/* Form Controls & Code Inputs */
+/* Deep Form Controls & Code Inputs */
 textarea, [data-baseweb="input"], [data-baseweb="select"] { 
-    background-color: rgba(3, 5, 10, 0.6) !important; 
+    background-color: rgba(2, 4, 10, 0.75) !important; 
     color: var(--text-main) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 0px 0px 12px 12px !important; /* Flat top for macOS header */
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0px 0px 14px 14px !important;
     font-family: 'JetBrains Mono', monospace !important;
-    font-size: 13.5px !important;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.3) !important;
+    font-size: 14px !important;
+    box-shadow: inset 0 4px 15px rgba(0,0,0,0.6) !important;
 }
 
-/* Fix dropdown menus slightly so they don't have flat tops */
-[data-baseweb="select"] { border-radius: 12px !important; }
+[data-baseweb="select"] { border-radius: 14px !important; }
 
 textarea:focus {
     border-color: var(--cyan) !important;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.3), 0 0 0 2px rgba(6, 182, 212, 0.3) !important;
+    box-shadow: inset 0 4px 15px rgba(0,0,0,0.6), 0 0 20px var(--glow-cyan) !important;
 }
 
-/* Chat Input Bar Styling */
+/* Chat Input Bar */
 [data-testid="stChatInput"] {
-    border-radius: 16px !important;
-    border: 1px solid var(--primary) !important;
-    background: rgba(10, 14, 26, 0.9) !important;
-    backdrop-filter: blur(10px) !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 18px !important;
+    border: 1.5px solid var(--primary) !important;
+    background: rgba(8, 12, 24, 0.95) !important;
+    backdrop-filter: blur(15px) !important;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* macOS Terminal Header */
+/* macOS Cyber Terminal Header */
 .mac-header {
-    background: #1e1e2e;
-    padding: 10px 16px;
-    border-radius: 12px 12px 0 0;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(180deg, #181b29, #111320);
+    padding: 12px 18px;
+    border-radius: 14px 14px 0 0;
+    border: 1px solid rgba(255,255,255,0.12);
     border-bottom: none;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: -1rem; /* Pull the textarea up tight */
+    justify-content: space-between;
+    margin-bottom: -1rem;
     position: relative;
     z-index: 10;
 }
-.mac-btn { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.mac-dots { display: flex; align-items: center; gap: 8px; }
+.mac-btn { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
 .mac-close { background: #ff5f56; }
 .mac-min { background: #ffbd2e; }
 .mac-max { background: #27c93f; }
 .mac-title { 
-    margin-left: 8px; 
-    color: #6b7280; 
+    color: #a5b4fc; 
     font-family: 'JetBrains Mono', monospace; 
-    font-size: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+.mac-status-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
 /* Footer */
@@ -272,6 +284,7 @@ textarea:focus {
   text-align: center; 
   padding: 40px 0 20px 0; 
   font-weight: 600; 
+  letter-spacing: 0.05em;
 }
 """
 
@@ -301,7 +314,7 @@ SAMPLE_BUGS = {
         "error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable"
     ),
     "🗄️ SQL: JOIN Syntax Ambiguity": (
-        "SELECT id, name, department_name \nFROM users \nJOIN departments ON users.dept_id = departments.id\nWHERE id = 5;",
+        "SELECT id, name, department_name \nFROM users \nJOIN departments ON users.dept_id = departments.id\nWHERE id = id;",
         "ERROR: column reference \"id\" is ambiguous"
     ),
     "⚡ JS: Scope & Async Error": (
@@ -319,14 +332,14 @@ st.markdown(
     """
     <div class='header-wrapper'>
         <div class='brand-title'>
-            <div class='logo-badge'>🎓</div>
+            <div class='logo-badge'>⚡</div>
             <div>
-                <h1 style='margin:0; font-size:28px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:13px; color:#818cf8; font-weight:600; padding: 2px 8px; border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 12px; margin-left: 6px; background: rgba(129, 140, 248, 0.1);'>Studio v3.0</span></h1>
-                <div style='color:#94a3b8; font-size:14px; font-weight:500;'>Next-Gen Code Tutor, Diagnostic Hub & Interactive Assistant</div>
+                <h1 style='margin:0; font-size:30px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:12px; color:#c7d2fe; font-weight:700; padding: 3px 10px; border: 1px solid rgba(199, 210, 254, 0.4); border-radius: 12px; margin-left: 8px; background: rgba(99, 102, 241, 0.2); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);'>STUDIO v4.0 PRO</span></h1>
+                <div style='color:#94a3b8; font-size:14px; font-weight:500;'>Cybernetic Code Analysis & Autonomous CS Tutor</div>
             </div>
         </div>
         <div class='status-badge'>
-            <div class='pulse-dot'></div> Groq Llama-3.1 Engine Online
+            <div class='pulse-dot'></div> Llama-3.1-8b Engine Active
         </div>
     </div>
     """,
@@ -338,8 +351,8 @@ left_col, right_col = st.columns([1.1, 1], gap="large")
 
 # ================= LEFT COLUMN: TERMINAL =================
 with left_col:
-    st.markdown("### 💻 Source Code Terminal")
-    st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:16px;'>Paste your code and optional traceback logs to initiate AI diagnosis.</div>", unsafe_allow_html=True)
+    st.markdown("### 💻 Quantum Code Terminal")
+    st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:16px;'>Feed your source code and telemetry logs into the neural diagnostic matrix.</div>", unsafe_allow_html=True)
 
     ctrl_col1, ctrl_col2 = st.columns([1, 1.2])
     with ctrl_col1:
@@ -355,14 +368,17 @@ with left_col:
     code_val = sample_code if sample_code else ""
     err_val = sample_err if sample_err else ""
 
-    # Custom macOS Window Header for Source Code
+    # Source Terminal Header
     st.markdown(
-        """
+        f"""
         <div class="mac-header">
-            <span class="mac-btn mac-close"></span>
-            <span class="mac-btn mac-min"></span>
-            <span class="mac-btn mac-max"></span>
-            <span class="mac-title">main.source</span>
+            <div class="mac-dots">
+                <span class="mac-btn mac-close"></span>
+                <span class="mac-btn mac-min"></span>
+                <span class="mac-btn mac-max"></span>
+                <span class="mac-title">main.source</span>
+            </div>
+            <div class="mac-status-tag">{language.split()[0].upper()} MODE</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -370,7 +386,7 @@ with left_col:
     broken_code_input = st.text_area(
         "Source Code Workspace",
         value=code_val,
-        height=300,
+        height=280,
         placeholder="Paste your source code here...",
         key="code_input_area",
         label_visibility="collapsed"
@@ -378,14 +394,17 @@ with left_col:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Custom macOS Window Header for Traceback
+    # Traceback Terminal Header
     st.markdown(
         """
         <div class="mac-header">
-            <span class="mac-btn mac-close"></span>
-            <span class="mac-btn mac-min"></span>
-            <span class="mac-btn mac-max"></span>
-            <span class="mac-title">terminal.log</span>
+            <div class="mac-dots">
+                <span class="mac-btn mac-close"></span>
+                <span class="mac-btn mac-min"></span>
+                <span class="mac-btn mac-max"></span>
+                <span class="mac-title">terminal.log</span>
+            </div>
+            <div class="mac-status-tag" style="color: #f43f5e; background: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.3);">TELEMETRY</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -393,7 +412,7 @@ with left_col:
     error_input = st.text_area(
         "Traceback / Error Output (Optional)",
         value=err_val,
-        height=120,
+        height=110,
         placeholder="Paste compiler errors or logs here...",
         key="error_input_area",
         label_visibility="collapsed"
@@ -401,15 +420,15 @@ with left_col:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    with st.expander("⚙️ Advanced AI Parameters"):
+    with st.expander("⚙️ Neural Hyper-Parameters"):
         p_col1, p_col2 = st.columns(2)
         with p_col1:
-            temp = st.slider("Temperature", min_value=0.0, max_value=1.0, value=0.2, step=0.05)
+            temp = st.slider("Temperature (Creativity)", min_value=0.0, max_value=1.0, value=0.2, step=0.05)
         with p_col2:
-            max_tokens = st.slider("Max Token Limit", min_value=256, max_value=2048, value=1024, step=64)
+            max_tokens = st.slider("Max Token Response Limit", min_value=256, max_value=2048, value=1024, step=64)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    analyze = st.button("🚀 Run Full System Diagnostics", use_container_width=True)
+    analyze = st.button("🚀 Initialize Neural Diagnostics", use_container_width=True)
 
 
 # ================= RIGHT COLUMN: DIAGNOSTICS & CHAT =================
@@ -419,22 +438,22 @@ with right_col:
     # ---------------- TAB 1: DIAGNOSTIC HUB ----------------
     with tab_diag:
         if not analyze:
-            st.markdown("### 🧠 Waiting for deployment...")
-            st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:20px;'>Paste your code on the left and hit <b>Run Full System Diagnostics</b> to inspect:</div>", unsafe_allow_html=True)
+            st.markdown("### 🧠 Diagnostic Hub Standby")
+            st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:20px;'>Input code on the left and trigger <b>Initialize Neural Diagnostics</b> to deploy:</div>", unsafe_allow_html=True)
 
             st.markdown(
                 """
-                <div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:18px; border-radius:14px; margin-bottom:14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:8px;'>🎯 Root Cause Isolation</h4>
-                    <p style='margin:6px 0 0 0; font-size:13px; color:#94a3b8;'>Pinpoints exact failing line numbers and logical flaws instantly.</p>
+                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>🎯 Root Cause Isolation</h4>
+                    <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Instantly maps execution bottlenecks and structural logical errors.</p>
                 </div>
-                <div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:18px; border-radius:14px; margin-bottom:14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:8px;'>📚 Conceptual Breakdown</h4>
-                    <p style='margin:6px 0 0 0; font-size:13px; color:#94a3b8;'>Explains CS theory behind the fix clearly without overwhelming jargon.</p>
+                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>📚 CS Theory & Blueprint</h4>
+                    <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Deep explanation of underlying principles without unnecessary friction.</p>
                 </div>
-                <div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:18px; border-radius:14px; margin-bottom:14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:8px;'>⚡ Refactored Clean Code</h4>
-                    <p style='margin:6px 0 0 0; font-size:13px; color:#94a3b8;'>Generates clean, execution-ready code snippets with 1-click export.</p>
+                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>⚡ Refactored Clean Code</h4>
+                    <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Production-ready code blocks accompanied by 1-click clipboard utility.</p>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -442,12 +461,12 @@ with right_col:
 
         else:
             if not broken_code_input or not broken_code_input.strip():
-                st.warning("⚠️ Please paste code in the terminal before running diagnostics.")
+                st.warning("⚠️ Terminal is empty. Please enter or load code snippets before running diagnostics.")
             else:
-                with st.spinner("🧠 Scanning code architecture & computing fix..."):
+                with st.spinner("⚡ Running deep neural code scan..."):
                     try:
                         system_instructions = (
-                            "You are an elite Computer Science Professor and AI Code Tutor. "
+                            "You are an elite Computer Science Professor and Autonomous AI Code Tutor. "
                             f"Language context: {language}.\n"
                             "When analyzing broken code, strictly follow this clear format:\n"
                             "### 🔍 Root Cause Analysis\n"
@@ -495,7 +514,7 @@ with right_col:
                             d_col1, d_col2 = st.columns([1, 1])
                             with d_col1:
                                 st.download_button(
-                                    label="📥 Download Fixed Code",
+                                    label="📥 Export Fixed Code",
                                     data=fixed_code,
                                     file_name="fixed_code.txt",
                                     mime="text/plain",
@@ -504,14 +523,14 @@ with right_col:
                             with d_col2:
                                 copy_id = "copy-btn-" + uuid.uuid4().hex
                                 copy_html = f"""
-                                <button id='{copy_id}' style='background:linear-gradient(135deg,#6366f1,#06b6d4);color:white;border:none;border-radius:12px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);'>📋 Copy Solution</button>
+                                <button id='{copy_id}' style='background:linear-gradient(135deg,#6366f1,#06b6d4);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:11px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4); transition: all 0.3s ease;'>📋 Copy Solution</button>
                                 <script>
                                 const btn = document.getElementById('{copy_id}');
                                 if (btn) {{
                                   btn.addEventListener('click', async () => {{
                                     try {{
                                       await navigator.clipboard.writeText({json.dumps(fixed_code)});
-                                      btn.innerText = '✅ Copied!';
+                                      btn.innerText = '✅ Copied to Clipboard!';
                                       setTimeout(() => {{ btn.innerText = '📋 Copy Solution'; }}, 2500);
                                     }} catch(e) {{
                                       btn.innerText = '❌ Failed';
@@ -524,53 +543,47 @@ with right_col:
                                 st.markdown(copy_html, unsafe_allow_html=True)
 
                     except Exception as e:
-                        st.error(f"❌ API Execution Error: {e}")
+                        st.error(f"❌ Neural Processing Error: {e}")
 
     # ---------------- TAB 2: LIVE AI ASSISTANT ----------------
     with tab_chat:
         st.markdown("### 🤖 Interactive Tutor Chat")
         st.markdown(
             "<div style='color:#94a3b8; font-size:13.5px; margin-bottom:15px;'>"
-            "Ask follow-up questions about your code, request feature additions, or discuss CS concepts."
+            "Consult the neural assistant regarding architecture optimization, edge-cases, or theoretical concepts."
             "</div>",
             unsafe_allow_html=True
         )
 
-        # Dedicated container for history messages
         chat_container = st.container()
 
         with chat_container:
-            # Show initial greeting if no messages
             if not st.session_state.messages:
-                st.info("👋 Hello! I'm your EduFix Assistant. Run a diagnostic first, or ask me anything about the code in your terminal right now!")
+                st.info("👋 Hello! I am your EduFix Neural Assistant. Run diagnostics or ask me any question about your codebase right now!")
 
-            # Render message history
             for msg in st.session_state.messages:
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
 
-        # Native Chat Input placed at the tab level below the history container
-        if prompt := st.chat_input("Ask a question about your code..."):
-            # Append user message to state and render inside container
+        if prompt := st.chat_input("Ask a follow-up question..."):
             st.session_state.messages.append({"role": "user", "content": prompt})
             with chat_container:
                 with st.chat_message("user"):
                     st.markdown(prompt)
 
-            # Generate AI Assistant Response
             with chat_container:
                 with st.chat_message("assistant"):
-                    with st.spinner("Thinking..."):
+                    with st.spinner("Synthesizing response..."):
                         try:
-                            code_context = broken_code_input.strip() if broken_code_input else "No code provided."
+                            code_context = broken_code_input.strip() if broken_code_input else "No code loaded."
                             sys_prompt = (
-                                "You are an elite, friendly computer science tutor and coding assistant for EduFix AI. "
-                                f"The user is working in {language}.\n\n"
-                                "Current code in user's terminal:\n"
+                                "You are an elite, friendly computer science professor and assistant for EduFix AI Studio. "
+                                f"Language context: {language}.\n\n"
+                                "Current active code in user terminal:\n"
                                 "```\n"
                                 f"{code_context}\n"
                                 "```\n\n"
-                                "Answer the user's question directly, clearly, and concisely."
+                                "Answer clearly, concisely, and provide helpful code examples when appropriate."
                             )
 
                             api_messages = [{"role": "system", "content": sys_prompt}]
@@ -594,4 +607,4 @@ with right_col:
             st.rerun()
 
 # ---------- Footer ----------
-st.markdown("<div class='footer'>Crafted with 💡 by an 18‑year‑old founder • EduFix AI Ultimate Edition</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>CRAFTED WITH 💡 BY AN 18‑YEAR‑OLD FOUNDER • EDUFIX AI STUDIO V4.0 PRO</div>", unsafe_allow_html=True)
