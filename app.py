@@ -432,54 +432,62 @@ with right_col:
             unsafe_allow_html=True
         )
 
-        # Show initial greeting if no messages
-        if not st.session_state.messages:
-            st.info("👋 Hello! I'm your EduFix Assistant. Run a diagnostic first, or ask me anything about the code in your terminal right now!")
+        # Dedicated container for history messages
+        chat_container = st.container()
 
-        # Render message history
-        for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+        with chat_container:
+            # Show initial greeting if no messages
+            if not st.session_state.messages:
+                st.info("👋 Hello! I'm your EduFix Assistant. Run a diagnostic first, or ask me anything about the code in your terminal right now!")
 
-        # Native Chat Input
+            # Render message history
+            for msg in st.session_state.messages:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+
+        # Native Chat Input placed at the tab level below the history container
         if prompt := st.chat_input("Ask a question about your code..."):
-            # Render user prompt immediately
+            # Append user message to state and render inside container
             st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                st.markdown(prompt)
+            with chat_container:
+                with st.chat_message("user"):
+                    st.markdown(prompt)
 
             # Generate AI Assistant Response
-            with st.chat_message("assistant"):
-                with st.spinner("Thinking..."):
-                    try:
-                        code_context = broken_code_input.strip() if broken_code_input else "No code provided."
-                        sys_prompt = (
-                            "You are an elite, friendly computer science tutor and coding assistant for EduFix AI. "
-                            f"The user is working in {language}.\n\n"
-                            "Current code in user's terminal:\n"
-                            "```\n"
-                            f"{code_context}\n"
-                            "```\n\n"
-                            "Answer the user's question directly, clearly, and concisely."
-                        )
+            with chat_container:
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking..."):
+                        try:
+                            code_context = broken_code_input.strip() if broken_code_input else "No code provided."
+                            sys_prompt = (
+                                "You are an elite, friendly computer science tutor and coding assistant for EduFix AI. "
+                                f"The user is working in {language}.\n\n"
+                                "Current code in user's terminal:\n"
+                                "```\n"
+                                f"{code_context}\n"
+                                "```\n\n"
+                                "Answer the user's question directly, clearly, and concisely."
+                            )
 
-                        api_messages = [{"role": "system", "content": sys_prompt}]
-                        for m in st.session_state.messages:
-                            api_messages.append({"role": m["role"], "content": m["content"]})
+                            api_messages = [{"role": "system", "content": sys_prompt}]
+                            for m in st.session_state.messages:
+                                api_messages.append({"role": m["role"], "content": m["content"]})
 
-                        response = client.chat.completions.create(
-                            model="llama-3.1-8b-instant",
-                            messages=api_messages,
-                            temperature=0.5,
-                            max_tokens=800,
-                        )
+                            response = client.chat.completions.create(
+                                model="llama-3.1-8b-instant",
+                                messages=api_messages,
+                                temperature=0.5,
+                                max_tokens=800,
+                            )
 
-                        ai_reply = response.choices[0].message.content
-                        st.markdown(ai_reply)
-                        st.session_state.messages.append({"role": "assistant", "content": ai_reply})
+                            ai_reply = response.choices[0].message.content
+                            st.markdown(ai_reply)
+                            st.session_state.messages.append({"role": "assistant", "content": ai_reply})
 
-                    except Exception as e:
-                        st.error(f"❌ Assistant Error: {e}")
+                        except Exception as e:
+                            st.error(f"❌ Assistant Error: {e}")
+            
+            st.rerun()
 
 # ---------- Footer ----------
 st.markdown("<div class='footer'>Crafted with 💡 by an 18‑year‑old founder • EduFix AI Ultimate Edition</div>", unsafe_allow_html=True)
