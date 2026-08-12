@@ -2,12 +2,11 @@ import streamlit as st
 from groq import Groq
 import json
 import uuid
-import time
 
 # Page configuration - Wide workspace layout
 st.set_page_config(
     page_title="EduFix AI | Ultimate CS Studio",
-    page_icon="🌌",
+    page_icon="🎓",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -16,13 +15,13 @@ st.set_page_config(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ---------- Custom CSS for Stunning Visual Enhancements ----------
+# ---------- Custom CSS for Visual Enhancements ----------
 CUSTOM_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg-dark: #02040a;
-  --glass-bg: rgba(15, 20, 35, 0.45);
+  --bg-dark: #030408;
+  --glass-bg: rgba(15, 20, 35, 0.65);
   --glass-border: rgba(255, 255, 255, 0.08);
   --primary: #6366f1;
   --accent: #ec4899;
@@ -38,7 +37,7 @@ html, body, [class*="css"] {
     letter-spacing: -0.015em;
 }
 
-/* Animated Cosmic Gradient Background */
+/* Animated Cosmic Background */
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -62,20 +61,44 @@ h1, h2, h3, h4 {
     letter-spacing: -0.03em !important;
 }
 
-/* Glassmorphism Containers with floating effect */
-.studio-card {
+/* Directly style Streamlit Tab Panels as Glass Cards */
+[data-testid="stTabPanel"] {
   background: var(--glass-bg);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: 24px;
-  border-radius: 20px;
+  border-radius: 0px 0px 20px 20px;
   border: 1px solid var(--glass-border);
+  border-top: none;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   margin-bottom: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.studio-card:hover {
-  box-shadow: 0 15px 50px rgba(99, 102, 241, 0.15);
+
+/* Tab Bar Navigation */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+  gap: 8px;
+  background: rgba(10, 14, 26, 0.7);
+  padding: 6px;
+  border-radius: 16px 16px 0px 0px;
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
+}
+
+[data-testid="stTabs"] [data-baseweb="tab"] {
+  height: 44px;
+  border-radius: 10px;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border: none !important;
+  padding: 0px 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-testid="stTabs"] [aria-selected="true"] {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.3)) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Header & Status Banner */
@@ -96,24 +119,18 @@ h1, h2, h3, h4 {
 
 .logo-badge {
   background: linear-gradient(135deg, var(--primary), var(--cyan));
-  width: 60px;
-  height: 60px;
+  width: 58px;
+  height: 58px;
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 28px;
   box-shadow: 0 8px 30px var(--glow);
-  animation: pulseLogo 3s infinite alternate;
-}
-
-@keyframes pulseLogo {
-  0% { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3); }
-  100% { box-shadow: 0 8px 45px rgba(6, 182, 212, 0.5); }
 }
 
 .status-badge {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.3);
   color: #34d399;
   padding: 6px 14px;
@@ -131,10 +148,7 @@ h1, h2, h3, h4 {
   background-color: #34d399;
   border-radius: 50%;
   box-shadow: 0 0 10px #34d399;
-  animation: blink 1.5s infinite;
 }
-
-@keyframes blink { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
 
 /* Styled Action Button */
 .stButton>button {
@@ -151,28 +165,8 @@ h1, h2, h3, h4 {
 }
 
 .stButton>button:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 12px 35px var(--glow) !important;
-}
-
-/* Chat Input Styling */
-[data-testid="stChatInput"] {
-    background: rgba(15, 20, 35, 0.8) !important;
-    border: 1px solid var(--primary) !important;
-    border-radius: 16px !important;
-}
-
-/* Chat Message Bubbles */
-[data-testid="stChatMessage"] {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 15px;
-    backdrop-filter: blur(10px);
-}
-[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-    background: rgba(99, 102, 241, 0.08);
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 30px var(--glow) !important;
 }
 
 /* Form Controls & Code Inputs */
@@ -190,11 +184,12 @@ textarea:focus {
     box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3) !important;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.5); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+/* Chat Input Bar Styling */
+[data-testid="stChatInput"] {
+    border-radius: 14px !important;
+    border: 1px solid var(--primary) !important;
+    background: rgba(10, 14, 26, 0.8) !important;
+}
 
 /* Footer */
 .footer { 
@@ -216,7 +211,7 @@ if not GROQ_API_KEY:
 
 client = Groq(api_key=GROQ_API_KEY)
 
-# Extensively Expanded Sample Bug Library
+# Sample Bug Library
 SAMPLE_BUGS = {
     "Select Sample...": ("", ""),
     "🐍 Python: Indentation & Type Error": (
@@ -225,7 +220,7 @@ SAMPLE_BUGS = {
     ),
     "⚛️ React: Hook Dependency Loop": (
         "import { useState, useEffect } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount(count + 1);\n  });\n  return <div>{count}</div>;\n}",
-        "Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect."
+        "Warning: Maximum update depth exceeded."
     ),
     "🦀 Rust: Borrow Checker Bug": (
         "fn main() {\n    let mut s = String::from(\"hello\");\n    let r1 = &s;\n    let r2 = &s;\n    let r3 = &mut s;\n    println!(\"{}, {}, {}\", r1, r2, r3);\n}",
@@ -241,7 +236,7 @@ SAMPLE_BUGS = {
     ),
     "⚙️ C++: Off-by-One Array Bug": (
         "#include <iostream>\nusing namespace std;\n\nint main() {\n    int arr[5] = {1, 2, 3, 4, 5};\n    for(int i=0; i<=5; i++) {\n        cout << arr[i] << endl;\n    }\n    return 0;\n}",
-        "Segmentation fault (core dumped) / Garbage output"
+        "Segmentation fault (core dumped)"
     )
 }
 
@@ -250,14 +245,14 @@ st.markdown(
     """
     <div class='header-wrapper'>
         <div class='brand-title'>
-            <div class='logo-badge'>✨</div>
+            <div class='logo-badge'>🎓</div>
             <div>
-                <h1 style='margin:0; font-size:28px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:14px; color:#818cf8; font-weight:600; padding-left:8px; border: 1px solid #818cf8; border-radius: 12px; padding: 2px 8px; margin-left: 6px;'>Ultimate</span></h1>
-                <div style='color:#94a3b8; font-size:14.5px; font-weight:500;'>Next-Gen Code Tutor, Diagnostic Hub & Interactive Assistant</div>
+                <h1 style='margin:0; font-size:28px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:13px; color:#818cf8; font-weight:600; padding: 2px 8px; border: 1px solid #818cf8; border-radius: 12px; margin-left: 6px;'>Studio v3.0</span></h1>
+                <div style='color:#94a3b8; font-size:14px; font-weight:500;'>Next-Gen Code Tutor, Diagnostic Hub & Interactive Assistant</div>
             </div>
         </div>
         <div class='status-badge'>
-            <div class='pulse-dot'></div> System Core Online
+            <div class='pulse-dot'></div> Groq Llama-3.1 Engine Online
         </div>
     </div>
     """,
@@ -265,99 +260,92 @@ st.markdown(
 )
 
 # ---------- Widescreen Workspace Columns ----------
-left_col, right_col = st.columns([1.2, 1], gap="large")
+left_col, right_col = st.columns([1.1, 1], gap="large")
 
+# ================= LEFT COLUMN: TERMINAL =================
 with left_col:
-    st.markdown("<div class='studio-card'>", unsafe_allow_html=True)
     st.markdown("### 💻 Source Code Terminal")
-    st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:16px;'>Paste code, select a language, or load a scenario to begin analysis.</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:16px;'>Paste your code and optional traceback logs to initiate AI diagnosis.</div>", unsafe_allow_html=True)
 
-    # Top Toolbar controls
     ctrl_col1, ctrl_col2 = st.columns([1, 1.2])
     with ctrl_col1:
-        language = st.selectbox("Context Language", ["Python", "JavaScript / React", "C++", "Java", "Rust", "SQL", "Go"], index=0)
+        language = st.selectbox("Language Context", ["Python", "JavaScript / React", "C++", "Java", "Rust", "SQL", "Go"], index=0)
     
     with ctrl_col2:
-        sample_choice = st.selectbox("💡 Load Scenario (Try it out)", list(SAMPLE_BUGS.keys()))
+        sample_choice = st.selectbox("💡 Load Scenario Bug", list(SAMPLE_BUGS.keys()))
         if sample_choice != "Select Sample...":
             sample_code, sample_err = SAMPLE_BUGS[sample_choice]
         else:
             sample_code, sample_err = "", ""
 
-    # Inputs
     code_val = sample_code if sample_code else ""
     err_val = sample_err if sample_err else ""
 
     broken_code_input = st.text_area(
         "Source Code Workspace",
         value=code_val,
-        height=320,
+        height=300,
         placeholder="Paste your source code here...",
         key="code_input_area"
     )
 
     error_input = st.text_area(
-        "Traceback Log (Optional)",
+        "Traceback / Error Output (Optional)",
         value=err_val,
         height=100,
         placeholder="Paste compiler errors or logs here...",
         key="error_input_area"
     )
 
-    # Advanced Model Settings
     with st.expander("⚙️ Advanced AI Parameters"):
         p_col1, p_col2 = st.columns(2)
         with p_col1:
-            temp = st.slider("Temperature", min_value=0.0, max_value=1.0, value=0.2, step=0.05, help="Lower = strict, Higher = creative.")
+            temp = st.slider("Temperature", min_value=0.0, max_value=1.0, value=0.2, step=0.05)
         with p_col2:
             max_tokens = st.slider("Max Token Limit", min_value=256, max_value=2048, value=1024, step=64)
 
     st.markdown("<br>", unsafe_allow_html=True)
     analyze = st.button("🚀 Run Full System Diagnostics", use_container_width=True)
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
+# ================= RIGHT COLUMN: DIAGNOSTICS & CHAT =================
 with right_col:
     tab_diag, tab_chat = st.tabs(["📊 Diagnostic Hub", "💬 Live AI Assistant"])
     
     # ---------------- TAB 1: DIAGNOSTIC HUB ----------------
     with tab_diag:
         if not analyze:
-            # Default Workspace State (Feature Dashboard)
-            st.markdown("<div class='studio-card'>", unsafe_allow_html=True)
             st.markdown("### 🧠 Waiting for deployment...")
-            st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:20px;'>Features active on diagnostic run:</div>", unsafe_allow_html=True)
+            st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:20px;'>Paste your code on the left and hit <b>Run Full System Diagnostics</b> to inspect:</div>", unsafe_allow_html=True)
 
             st.markdown(
                 """
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px; margin-bottom:12px;'>
+                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:16px; border-radius:12px; margin-bottom:12px;'>
                     <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>🎯 Root Cause Isolation</h4>
-                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Pinpoints exact failing lines automatically.</p>
+                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Pinpoints exact failing line numbers and logical flaws.</p>
                 </div>
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px; margin-bottom:12px;'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>📚 Pedagogical Learning</h4>
-                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Explains the CS theory behind the fix.</p>
+                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:16px; border-radius:12px; margin-bottom:12px;'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>📚 Conceptual Breakdown</h4>
+                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Explains CS theory clearly without overwhelming jargon.</p>
                 </div>
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px; margin-bottom:12px;'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>⚡ Instant Code Export</h4>
-                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Generates clean code ready for your IDE.</p>
+                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:16px; border-radius:12px; margin-bottom:12px;'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>⚡ Refactored Clean Code</h4>
+                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Generates clean, execution-ready code snippets with 1-click export.</p>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            st.markdown("</div>", unsafe_allow_html=True)
 
         else:
-            # Analysis Run State
             if not broken_code_input or not broken_code_input.strip():
-                st.warning("⚠️ Please provide code in the terminal to run diagnostics.")
+                st.warning("⚠️ Please paste code in the terminal before running diagnostics.")
             else:
-                with st.spinner("🧠 Compiling diagnostics & scanning structural integrity..."):
+                with st.spinner("🧠 Scanning code architecture & computing fix..."):
                     try:
                         system_instructions = (
                             "You are an elite Computer Science Professor and AI Code Tutor. "
                             f"Language context: {language}.\n"
-                            "When analyzing broken code, strictly follow this format:\n"
+                            "When analyzing broken code, strictly follow this clear format:\n"
                             "### 🔍 Root Cause Analysis\n"
                             "Pinpoint the line number and core issue in 1-2 clear sentences.\n\n"
                             "### 💡 Conceptual Breakdown\n"
@@ -365,14 +353,14 @@ with right_col:
                             "### 🛠️ Refactored Solution\n"
                             "Provide the full fixed code inside a single fenced markdown block.\n\n"
                             "### ⚡ Pro CS Tip\n"
-                            "Give one quick best practice tip regarding time complexity, readability, or language standards."
+                            "Give one quick best practice tip regarding time complexity, readability, or standards."
                         )
 
                         completion = client.chat.completions.create(
                             model="llama-3.1-8b-instant",
                             messages=[
                                 {"role": "system", "content": system_instructions},
-                                {"role": "user", "content": f"Language: {language}\n\nCode:\n{broken_code_input}\n\nError / Traceback:\n{error_input}"}
+                                {"role": "user", "content": f"Language: {language}\n\nCode:\n{broken_code_input}\n\nError:\n{error_input}"}
                             ],
                             temperature=float(temp),
                             max_tokens=int(max_tokens),
@@ -381,11 +369,10 @@ with right_col:
                         response_text = completion.choices[0].message.content
                         st.balloons()
 
-                        st.markdown("<div class='studio-card'>", unsafe_allow_html=True)
                         st.markdown("### 📊 Diagnostic Results")
                         st.divider()
 
-                        # Extract Code Block if Present
+                        # Extract Code Block
                         fixed_code = None
                         if response_text and "```" in response_text:
                             parts = response_text.split("```")
@@ -399,15 +386,14 @@ with right_col:
 
                         st.markdown(response_text)
 
-                        # Export Controls if Code Exists
                         if fixed_code:
                             st.divider()
                             d_col1, d_col2 = st.columns([1, 1])
                             with d_col1:
                                 st.download_button(
-                                    label="📥 Download Fixed Script",
+                                    label="📥 Download Fixed Code",
                                     data=fixed_code,
-                                    file_name="fixed_code_edufix.txt", # text by default to handle all languages safely
+                                    file_name="fixed_code.txt",
                                     mime="text/plain",
                                     use_container_width=True
                                 )
@@ -421,10 +407,10 @@ with right_col:
                                   btn.addEventListener('click', async () => {{
                                     try {{
                                       await navigator.clipboard.writeText({json.dumps(fixed_code)});
-                                      btn.innerText = '✅ Copied to Clipboard!';
+                                      btn.innerText = '✅ Copied!';
                                       setTimeout(() => {{ btn.innerText = '📋 Copy Solution'; }}, 2500);
                                     }} catch(e) {{
-                                      btn.innerText = '❌ Copy Failed';
+                                      btn.innerText = '❌ Failed';
                                       setTimeout(() => {{ btn.innerText = '📋 Copy Solution'; }}, 2500);
                                     }}
                                   }});
@@ -433,50 +419,67 @@ with right_col:
                                 """
                                 st.markdown(copy_html, unsafe_allow_html=True)
 
-                        st.markdown("</div>", unsafe_allow_html=True)
-
                     except Exception as e:
                         st.error(f"❌ API Execution Error: {e}")
 
     # ---------------- TAB 2: LIVE AI ASSISTANT ----------------
     with tab_chat:
-        st.markdown("<div class='studio-card' style='height: 600px; display: flex; flex-direction: column; overflow: hidden;'>", unsafe_allow_html=True)
-        st.markdown("### 🤖 Interactive Tutor Chat", unsafe_allow_html=True)
-        st.markdown("<p style='color:#94a3b8; font-size:13px;'>Ask follow-up questions about the code, theory, or request new features.</p>", unsafe_allow_html=True)
-        st.divider()
+        st.markdown("### 🤖 Interactive Tutor Chat")
+        st.markdown(
+            "<div style='color:#94a3b8; font-size:13.5px; margin-bottom:15px;'>"
+            "Ask follow-up questions about your code, request feature additions, or discuss CS concepts."
+            "</div>",
+            unsafe_allow_html=True
+        )
 
-        # Chat Message Container
-        chat_container = st.container(height=380, border=False)
-        
-        with chat_container:
-            if not st.session_state.messages:
-                st.info("👋 Hello! I'm your EduFix Assistant. Run a diagnostic first, or ask me anything about the code in your terminal right now!")
+        # Show initial greeting if no messages
+        if not st.session_state.messages:
+            st.info("👋 Hello! I'm your EduFix Assistant. Run a diagnostic first, or ask me anything about the code in your terminal right now!")
 
-            for message in st.session_state.messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
+        # Render message history
+        for msg in st.session_state.messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
 
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        # Chat Input Bar (Placed outside container so it anchors to the bottom)
-        if prompt := st.chat_input("Ask a question about the code..."):
-            # Append user message
+        # Native Chat Input
+        if prompt := st.chat_input("Ask a question about your code..."):
+            # Render user prompt immediately
             st.session_state.messages.append({"role": "user", "content": prompt})
-            with chat_container:
-                with st.chat_message("user"):
-                    st.markdown(prompt)
+            with st.chat_message("user"):
+                st.markdown(prompt)
 
-            # Generate AI response incorporating the current terminal code
-            with chat_container:
-                with st.chat_message("assistant"):
-                    message_placeholder = st.empty()
-                    
-                    # Contextual awareness prompt
-                    context_prompt = (
-                        "You are an elite, friendly coding assistant for EduFix AI. "
-                        "The user is currently working on this code in their terminal:\n\n"
-                        f"```{language}\n"
-                        f"{broken_code_input}\n"
-                        "```\n\n"
-                        "Answer their following question directly, concisely, and helpfully."
-                    )
+            # Generate AI Assistant Response
+            with st.chat_message("assistant"):
+                with st.spinner("Thinking..."):
+                    try:
+                        code_context = broken_code_input.strip() if broken_code_input else "No code provided."
+                        sys_prompt = (
+                            "You are an elite, friendly computer science tutor and coding assistant for EduFix AI. "
+                            f"The user is working in {language}.\n\n"
+                            "Current code in user's terminal:\n"
+                            "```\n"
+                            f"{code_context}\n"
+                            "```\n\n"
+                            "Answer the user's question directly, clearly, and concisely."
+                        )
+
+                        api_messages = [{"role": "system", "content": sys_prompt}]
+                        for m in st.session_state.messages:
+                            api_messages.append({"role": m["role"], "content": m["content"]})
+
+                        response = client.chat.completions.create(
+                            model="llama-3.1-8b-instant",
+                            messages=api_messages,
+                            temperature=0.5,
+                            max_tokens=800,
+                        )
+
+                        ai_reply = response.choices[0].message.content
+                        st.markdown(ai_reply)
+                        st.session_state.messages.append({"role": "assistant", "content": ai_reply})
+
+                    except Exception as e:
+                        st.error(f"❌ Assistant Error: {e}")
+
+# ---------- Footer ----------
+st.markdown("<div class='footer'>Crafted with 💡 by an 18‑year‑old founder • EduFix AI Ultimate Edition</div>", unsafe_allow_html=True)
