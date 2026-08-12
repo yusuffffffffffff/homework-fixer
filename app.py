@@ -15,7 +15,7 @@ st.set_page_config(
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ---------- Custom CSS for Visual Enhancements ----------
+# ---------- Custom CSS for Premium Visual Enhancements ----------
 CUSTOM_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
@@ -37,6 +37,22 @@ html, body, [class*="css"] {
     letter-spacing: -0.015em;
 }
 
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 /* Animated Cosmic Background */
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
@@ -47,7 +63,7 @@ html, body, [class*="css"] {
 [data-testid="stAppViewContainer"] {
   background: linear-gradient(-45deg, #02040a, #0f172a, #1e1b4b, #2e1065, #02040a);
   background-size: 400% 400%;
-  animation: gradientMove 20s ease infinite;
+  animation: gradientMove 25s ease infinite;
   color: var(--text-main);
 }
 
@@ -78,7 +94,7 @@ h1, h2, h3, h4 {
 [data-testid="stTabs"] [data-baseweb="tab-list"] {
   gap: 8px;
   background: rgba(10, 14, 26, 0.7);
-  padding: 6px;
+  padding: 8px;
   border-radius: 16px 16px 0px 0px;
   border: 1px solid var(--glass-border);
   border-bottom: none;
@@ -91,14 +107,15 @@ h1, h2, h3, h4 {
   font-weight: 600 !important;
   font-size: 14px !important;
   border: none !important;
-  padding: 0px 20px !important;
-  transition: all 0.2s ease !important;
+  padding: 0px 24px !important;
+  transition: all 0.3s ease !important;
 }
 
 [data-testid="stTabs"] [aria-selected="true"] {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.3)) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2) !important;
 }
 
 /* Header & Status Banner */
@@ -127,6 +144,7 @@ h1, h2, h3, h4 {
   justify-content: center;
   font-size: 28px;
   box-shadow: 0 8px 30px var(--glow);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .status-badge {
@@ -140,6 +158,7 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  backdrop-filter: blur(10px);
 }
 
 .pulse-dot {
@@ -148,47 +167,102 @@ h1, h2, h3, h4 {
   background-color: #34d399;
   border-radius: 50%;
   box-shadow: 0 0 10px #34d399;
+  animation: pulse 2s infinite;
 }
 
-/* Styled Action Button */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+/* Premium Chat Bubbles */
+[data-testid="stChatMessage"] {
+    background: rgba(20, 25, 40, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+    backdrop-filter: blur(12px) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    margin-bottom: 15px !important;
+}
+
+/* Glowing Pulsing Action Button */
+@keyframes buttonGlow {
+    0% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.7); }
+    100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.3); }
+}
+
 .stButton>button {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
   color: white !important; 
-  border: none !important; 
+  border: 1px solid rgba(255, 255, 255, 0.1) !important; 
   padding: 14px 28px !important; 
   font-weight: 700 !important; 
   font-size: 16px !important;
   border-radius: 14px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 6px 20px var(--glow) !important;
+  animation: buttonGlow 3s infinite alternate !important;
 }
 
 .stButton>button:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 10px 30px var(--glow) !important;
+    box-shadow: 0 12px 40px rgba(236, 72, 153, 0.6) !important;
 }
 
 /* Form Controls & Code Inputs */
 textarea, [data-baseweb="input"], [data-baseweb="select"] { 
-    background-color: rgba(5, 8, 18, 0.7) !important; 
+    background-color: rgba(3, 5, 10, 0.6) !important; 
     color: var(--text-main) !important;
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0px 0px 12px 12px !important; /* Flat top for macOS header */
     font-family: 'JetBrains Mono', monospace !important;
     font-size: 13.5px !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.3) !important;
 }
+
+/* Fix dropdown menus slightly so they don't have flat tops */
+[data-baseweb="select"] { border-radius: 12px !important; }
 
 textarea:focus {
     border-color: var(--cyan) !important;
-    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3) !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.3), 0 0 0 2px rgba(6, 182, 212, 0.3) !important;
 }
 
 /* Chat Input Bar Styling */
 [data-testid="stChatInput"] {
-    border-radius: 14px !important;
+    border-radius: 16px !important;
     border: 1px solid var(--primary) !important;
-    background: rgba(10, 14, 26, 0.8) !important;
+    background: rgba(10, 14, 26, 0.9) !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* macOS Terminal Header */
+.mac-header {
+    background: #1e1e2e;
+    padding: 10px 16px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: -1rem; /* Pull the textarea up tight */
+    position: relative;
+    z-index: 10;
+}
+.mac-btn { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.mac-close { background: #ff5f56; }
+.mac-min { background: #ffbd2e; }
+.mac-max { background: #27c93f; }
+.mac-title { 
+    margin-left: 8px; 
+    color: #6b7280; 
+    font-family: 'JetBrains Mono', monospace; 
+    font-size: 12px;
 }
 
 /* Footer */
@@ -247,7 +321,7 @@ st.markdown(
         <div class='brand-title'>
             <div class='logo-badge'>🎓</div>
             <div>
-                <h1 style='margin:0; font-size:28px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:13px; color:#818cf8; font-weight:600; padding: 2px 8px; border: 1px solid #818cf8; border-radius: 12px; margin-left: 6px;'>Studio v3.0</span></h1>
+                <h1 style='margin:0; font-size:28px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:13px; color:#818cf8; font-weight:600; padding: 2px 8px; border: 1px solid rgba(129, 140, 248, 0.4); border-radius: 12px; margin-left: 6px; background: rgba(129, 140, 248, 0.1);'>Studio v3.0</span></h1>
                 <div style='color:#94a3b8; font-size:14px; font-weight:500;'>Next-Gen Code Tutor, Diagnostic Hub & Interactive Assistant</div>
             </div>
         </div>
@@ -281,21 +355,51 @@ with left_col:
     code_val = sample_code if sample_code else ""
     err_val = sample_err if sample_err else ""
 
+    # Custom macOS Window Header for Source Code
+    st.markdown(
+        """
+        <div class="mac-header">
+            <span class="mac-btn mac-close"></span>
+            <span class="mac-btn mac-min"></span>
+            <span class="mac-btn mac-max"></span>
+            <span class="mac-title">main.source</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     broken_code_input = st.text_area(
         "Source Code Workspace",
         value=code_val,
         height=300,
         placeholder="Paste your source code here...",
-        key="code_input_area"
+        key="code_input_area",
+        label_visibility="collapsed"
     )
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Custom macOS Window Header for Traceback
+    st.markdown(
+        """
+        <div class="mac-header">
+            <span class="mac-btn mac-close"></span>
+            <span class="mac-btn mac-min"></span>
+            <span class="mac-btn mac-max"></span>
+            <span class="mac-title">terminal.log</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     error_input = st.text_area(
         "Traceback / Error Output (Optional)",
         value=err_val,
-        height=100,
+        height=120,
         placeholder="Paste compiler errors or logs here...",
-        key="error_input_area"
+        key="error_input_area",
+        label_visibility="collapsed"
     )
+
+    st.markdown("<br>", unsafe_allow_html=True)
 
     with st.expander("⚙️ Advanced AI Parameters"):
         p_col1, p_col2 = st.columns(2)
@@ -320,17 +424,17 @@ with right_col:
 
             st.markdown(
                 """
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:16px; border-radius:12px; margin-bottom:12px;'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>🎯 Root Cause Isolation</h4>
-                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Pinpoints exact failing line numbers and logical flaws.</p>
+                <div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:18px; border-radius:14px; margin-bottom:14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:8px;'>🎯 Root Cause Isolation</h4>
+                    <p style='margin:6px 0 0 0; font-size:13px; color:#94a3b8;'>Pinpoints exact failing line numbers and logical flaws instantly.</p>
                 </div>
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:16px; border-radius:12px; margin-bottom:12px;'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>📚 Conceptual Breakdown</h4>
-                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Explains CS theory clearly without overwhelming jargon.</p>
+                <div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:18px; border-radius:14px; margin-bottom:14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:8px;'>📚 Conceptual Breakdown</h4>
+                    <p style='margin:6px 0 0 0; font-size:13px; color:#94a3b8;'>Explains CS theory behind the fix clearly without overwhelming jargon.</p>
                 </div>
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:16px; border-radius:12px; margin-bottom:12px;'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe;'>⚡ Refactored Clean Code</h4>
-                    <p style='margin:4px 0 0 0; font-size:13px; color:#94a3b8;'>Generates clean, execution-ready code snippets with 1-click export.</p>
+                <div style='background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:18px; border-radius:14px; margin-bottom:14px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);'>
+                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:8px;'>⚡ Refactored Clean Code</h4>
+                    <p style='margin:6px 0 0 0; font-size:13px; color:#94a3b8;'>Generates clean, execution-ready code snippets with 1-click export.</p>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -400,7 +504,7 @@ with right_col:
                             with d_col2:
                                 copy_id = "copy-btn-" + uuid.uuid4().hex
                                 copy_html = f"""
-                                <button id='{copy_id}' style='background:linear-gradient(135deg,#6366f1,#06b6d4);color:white;border:none;border-radius:12px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif;'>📋 Copy Solution</button>
+                                <button id='{copy_id}' style='background:linear-gradient(135deg,#6366f1,#06b6d4);color:white;border:none;border-radius:12px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);'>📋 Copy Solution</button>
                                 <script>
                                 const btn = document.getElementById('{copy_id}');
                                 if (btn) {{
