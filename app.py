@@ -142,14 +142,18 @@ with st.container():
             """,
             unsafe_allow_html=True,
         )
-    with col2:
-        st.markdown("<div class='header-left'>", unsafe_allow_html=True)
-        st.markdown("<div style='margin-left:4px'>")
-        st.markdown("<h1 style='margin:0; padding-bottom:4px;'>EduFix AI</h1>")
-        st.markdown("<div class='small-muted'>An encouraging code tutor that explains problems clearly and returns working fixes.</div>")
-        st.markdown("</div>")
-        st.markdown("</div>")
-
+with col2:
+        st.markdown(
+            """
+            <div class='header-left'>
+                <div style='margin-left:4px'>
+                    <h1 style='margin:0; padding-bottom:4px;'>EduFix AI</h1>
+                    <div class='small-muted'>An encouraging code tutor that explains problems clearly and returns working fixes.</div>
+                </div>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 
 # Use tabs for input and examples
