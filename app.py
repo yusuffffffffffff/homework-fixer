@@ -1,33 +1,54 @@
 import streamlit as st
 from groq import Groq
 
-# 1. Page Configuration
-st.set_page_config(page_title="EduFix AI", page_icon="🎓", layout="centered")
+# 1. Custom Premium Page Configuration
+st.set_page_config(
+    page_title="EduFix AI | Smart Homework Assistant", 
+    page_icon="🎓", 
+    layout="centered"
+)
 
-# 2. Connect to the free AI brain
+# 2. Securely Connect to the AI Brain
 GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 client = Groq(api_key=GROQ_API_KEY)
 
-
-# 3. Design the Web Screen Headers
-st.title("🎓 EduFix AI")
-st.subheader("The Student AI Homework Coding Assistant")
-st.write("Paste your broken python code and the error message below to get a friendly explanation and instant fix.")
+# 3. Clean Visual Header Section
+st.markdown("<h1 style='text-align: center; color: #FF4B4B;'>🎓 EduFix AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 18px; color: #FAFAFA;'>The Intelligent Code Tutor for Students</p>", unsafe_allow_html=True)
+st.write("Stop stressing over confusing terminal bugs. Paste your issue below for a friendly breakdown and an instant code correction.")
 
 st.divider()
 
-# 4. Create Two Input Areas for the Student
-broken_code_input = st.text_area("📋 Paste your broken code here:", height=150, placeholder="def my_function()\n    print('Hello')")
-error_input = st.text_area("❌ Paste the error message here (Optional):", height=70, placeholder="SyntaxError: expected ':'")
+# 4. Organized Side-by-Side Input Columns
+col1, col2 = st.columns(2)
 
-# 5. Create the Action Button
-if st.button("🚀 Fix My Homework", type="primary"):
+with col1:
+    st.markdown("### 📋 Your Code")
+    broken_code_input = st.text_area(
+        "Paste your broken code:", 
+        height=220, 
+        placeholder="def my_function()\n    print('Hello')",
+        label_visibility="collapsed"
+    )
+
+with col2:
+    st.markdown("### ❌ The Error")
+    error_input = st.text_area(
+        "Paste the error message (Optional):", 
+        height=220, 
+        placeholder="SyntaxError: expected ':'",
+        label_visibility="collapsed"
+    )
+
+st.write("") # Spacer
+
+# 5. Full-Width Premium Action Button
+if st.button("🚀 Analyze & Fix My Code", type="primary", use_container_width=True):
     if not broken_code_input.strip():
         st.warning("Please paste some code first!")
     else:
-        with st.spinner("AI Agent analyzing your bug..."):
+        with st.spinner("🧠 AI Agent diagnosing your script..."):
             try:
-                # System instructions telling the AI how to act
                 system_instructions = (
                     "You are an expert, encouraging computer science tutor. "
                     "A student will give you broken code and an error message. "
@@ -36,23 +57,24 @@ if st.button("🚀 Fix My Homework", type="primary"):
                     "Third, output the completely fixed, working code block."
                 )
 
-                # Send input data to the AI model
                 completion = client.chat.completions.create(
                     model="llama-3.1-8b-instant",
                     messages=[
-                        {"role": "system", "content": system_instructions},
+                        {"role": "system", "system_instructions"},
                         {"role": "user", "content": f"Broken Code:\n{broken_code_input}\n\nError:\n{error_input}"}
                     ],
                     temperature=0.2,
                 )
                 
-                # Display results beautifully on the screen
+                # 6. Beautiful Tabbed & Structured Output Display
+                st.balloons() # Fun visual milestone celebration
                 st.success("Analysis Complete!")
-                st.markdown("### 🛠️ AI Tutor Feedback")
-                st.write(completion.choices[0].message.content)
+                
+                st.markdown("### 🛠️ AI Tutor Solution")
+                st.info(completion.choices.message.content)
                 
             except Exception as e:
                 st.error(f"An error occurred: {e}")
 
 st.divider()
-st.caption("Built with 🧠 by an 18-year-old founder.")
+st.markdown("<p style='text-align: center; font-size: 12px; color: #888888;'>Built with 🧠 by an 18-year-old founder.</p>", unsafe_allow_html=True)
