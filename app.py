@@ -17,24 +17,24 @@ CUSTOM_CSS = """
 
 :root {
   --bg-color: #030305;
-  --glass-bg: rgba(22, 28, 48, 0.7);
+  --glass-bg: rgba(22, 28, 48, 0.65);
   --glass-border: rgba(255, 255, 255, 0.08);
   --primary: #7c7fed;
   --accent: #f472b6;
-  --glow: rgba(124, 127, 237, 0.25);
+  --glow: rgba(124, 127, 237, 0.3);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
 }
 
-/* Base typography using Plus Jakarta Sans */
+/* Global typography using Plus Jakarta Sans */
 html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
 }
 
 /* Deep, swirling cosmic gradient */
 [data-testid="stAppViewContainer"] {
-  background: radial-gradient(circle at 75% 25%, #231f6d 0%, var(--bg-color) 45%, var(--bg-color) 100%);
+  background: radial-gradient(circle at 80% 20%, #231f6d 0%, #0c0d1a 40%, var(--bg-color) 100%);
   color: var(--text-main);
 }
 
@@ -46,61 +46,104 @@ h1, h2, h3 {
     color: #ffffff !important; 
     font-weight: 800 !important;
     letter-spacing: -0.035em !important;
-    margin-bottom: 0.5rem;
 }
 
-/* Elevated Glassmorphism Card */
-.card {
+/* Directly style Streamlit Tabs into a seamless glass card */
+[data-testid="stTabPanel"] {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding: 30px;
-  border-radius: 20px;
+  padding: 28px;
+  border-radius: 0px 0px 20px 20px;
   border: 1px solid var(--glass-border);
+  border-top: none;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   margin-bottom: 25px;
 }
 
-/* Header styling and polished logo */
-.header-left { display: flex; gap: 20px; align-items: center; margin-bottom: 25px;}
-.logo {
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  width: 80px; height: 80px; 
-  border-radius: 20px; 
-  display:flex; align-items:center; justify-content:center; 
-  font-size:40px;
-  box-shadow: 0 10px 25px var(--glow);
+/* Tab header navigation bar */
+[data-testid="stTabs"] [data-baseweb="tab-list"] {
+  gap: 8px;
+  background: rgba(15, 20, 35, 0.6);
+  padding: 6px;
+  border-radius: 16px 16px 0px 0px;
+  border: 1px solid var(--glass-border);
+  border-bottom: none;
 }
 
-.small-muted { color: var(--text-muted); font-size: 15px; line-height: 1.6; font-weight: 500; }
+[data-testid="stTabs"] [data-baseweb="tab"] {
+  height: 44px;
+  border-radius: 10px;
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  border: none !important;
+  padding: 0px 20px !important;
+  transition: all 0.2s ease !important;
+}
 
-/* Premium, Animated Call-to-Action Button */
+[data-testid="stTabs"] [aria-selected="true"] {
+  background: linear-gradient(135deg, rgba(124, 127, 237, 0.25), rgba(244, 114, 182, 0.25)) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Header & Logo styling */
+.header-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding: 10px 0;
+}
+
+.logo-box {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  box-shadow: 0 10px 25px var(--glow);
+  flex-shrink: 0;
+}
+
+.small-muted {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Premium, Animated Call-to-Action Buttons */
 .stButton>button {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
   color: white !important; 
-  border: none; 
-  padding: 12px 28px; 
-  font-weight: 700; 
-  font-size: 16px;
-  border-radius: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px var(--glow);
+  border: none !important; 
+  padding: 12px 24px !important; 
+  font-weight: 700 !important; 
+  font-size: 15px !important;
+  border-radius: 14px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 15px var(--glow) !important;
 }
 
 .stButton>button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px var(--glow);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px var(--glow) !important;
 }
 
-/* Modern inputs with JetBrains Mono font for code readability */
+/* Textarea with JetBrains Mono font */
 textarea, [data-baseweb="input"] { 
-    background-color: rgba(0,0,0,0.3) !important; 
+    background-color: rgba(5, 7, 15, 0.6) !important; 
     color: var(--text-main) !important;
     border: 1px solid var(--glass-border) !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     font-family: 'JetBrains Mono', monospace !important;
-    font-size: 14px !important;
+    font-size: 13.5px !important;
 }
 
 textarea:focus {
@@ -108,27 +151,46 @@ textarea:focus {
     box-shadow: 0 0 0 2px var(--glow) !important;
 }
 
-/* Distinctive Output Code Block */
+/* Output Solution Card */
+.result-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  margin-top: 20px;
+}
+
+/* Raw Output Box */
 .output-code {
   background: rgba(0, 0, 0, 0.5); 
   border: 1px solid var(--glass-border);
-  padding: 20px; 
-  border-radius: 14px; 
+  padding: 18px; 
+  border-radius: 12px; 
   color: #c7d2fe; 
   font-family: 'JetBrains Mono', monospace; 
-  font-size: 14px;
+  font-size: 13.5px;
   white-space: pre-wrap; 
-  overflow:auto;
+  overflow: auto;
   margin-top: 15px;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 5px; }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 5px; }
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(124, 127, 237, 0.5); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-.footer { color: #8096ac; font-size:14px; text-align:center; padding-top: 40px; padding-bottom: 30px; font-weight: 600; opacity: 0.8;}
+.footer { 
+  color: #8096ac; 
+  font-size: 13.5px; 
+  text-align: center; 
+  padding: 35px 0 20px 0; 
+  font-weight: 600; 
+  opacity: 0.8;
+}
 """
 
 st.markdown(f"<style>{CUSTOM_CSS}</style>", unsafe_allow_html=True)
@@ -142,31 +204,20 @@ if not GROQ_API_KEY:
 client = Groq(api_key=GROQ_API_KEY)
 
 # ---------- Header ----------
-with st.container():
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        st.markdown(
-            """
-            <div class='logo'>🎓</div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with col2:
-        st.markdown(
-            """
-            <div class='header-left'>
-                <div style='margin-left:4px'>
-                    <h1 style='margin:0; padding-bottom:6px;'>EduFix AI</h1>
-                    <div class='small-muted'>An encouraging code tutor that explains problems clearly and returns working fixes.</div>
-                </div>
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
+st.markdown(
+    """
+    <div class='header-container'>
+        <div class='logo-box'>🎓</div>
+        <div>
+            <h1 style='margin:0; padding-bottom:4px;'>EduFix AI</h1>
+            <div class='small-muted'>An encouraging code tutor that explains problems clearly and returns working fixes.</div>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-st.markdown("<div class='card'>", unsafe_allow_html=True)
-
-# Tabs with premium language
+# Tabs Navigation
 tab_input, tab_examples = st.tabs(["🚀 Analysis Terminal", "💡 Tutorial Guidance"])
 
 with tab_input:
@@ -213,8 +264,7 @@ with tab_examples:
     st.markdown("- 🔵 `TypeError` (invalid operation sequence detection)")
     st.info("Pro Tip: Context is key. The more environmental data you can provide (like the full error box), the faster the AI can precisely optimize your solution.")
 
-st.markdown("</div>", unsafe_allow_html=True)
-
+# ---------- Logic & Processing ----------
 if analyze:
     if not broken_code_input or not broken_code_input.strip():
         st.warning("⚠️ Please paste your source code before running the analyzer.")
@@ -244,7 +294,8 @@ if analyze:
 
                 st.balloons()
                 
-                st.markdown("<div class='card'>", unsafe_allow_html=True)
+                # Render results inside a dedicated card
+                st.markdown("<div class='result-card'>", unsafe_allow_html=True)
                 st.markdown("### 🛠️ AI Tutor Solution")
                 st.divider()
 
@@ -283,7 +334,7 @@ if analyze:
                     with copy_col:
                         copy_id = "copy-btn-" + uuid.uuid4().hex
                         copy_html = f"""
-                        <button id='{copy_id}' style='background:linear-gradient(135deg,#7c7fed,#f472b6);color:white;border:none;border-radius:14px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif;letter-spacing:-0.02em;transition:all 0.3s ease;'>📋 Copy Code</button>
+                        <button id='{copy_id}' style='background:linear-gradient(135deg,#7c7fed,#f472b6);color:white;border:none;border-radius:12px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif;letter-spacing:-0.02em;transition:all 0.3s ease;'>📋 Copy Code</button>
                         <script>
                         const btn = document.getElementById('{copy_id}');
                         if (btn) {{
