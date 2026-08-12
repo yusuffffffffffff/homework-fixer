@@ -13,24 +13,23 @@ st.set_page_config(
 
 # ---------- Custom CSS for visual enhancement ----------
 CUSTOM_CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   --bg-color: #030305;
-  --glass-bg: rgba(22, 28, 48, 0.7); /* Warmer glass */
-  --glass-border: rgba(255, 255, 255, 0.06); /* Finer border */
-  --primary: #7c7fed; /* Refined Indigo */
-  --accent: #f472b6; /* Refined Magenta */
-  --glow: rgba(124, 127, 237, 0.25); /* Diffused glow */
-  --text-main: #f1f5f9;
+  --glass-bg: rgba(22, 28, 48, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --primary: #7c7fed;
+  --accent: #f472b6;
+  --glow: rgba(124, 127, 237, 0.25);
+  --text-main: #f8fafc;
   --text-muted: #94a3b8;
 }
 
-/* Base typography for premium feel */
+/* Base typography using Plus Jakarta Sans */
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif !important;
-    letter-spacing: -0.01em;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    letter-spacing: -0.02em;
 }
 
 /* Deep, swirling cosmic gradient */
@@ -41,10 +40,12 @@ html, body, [class*="css"] {
 
 .stApp, .css-18e3th9 { background: transparent }
 
+/* High-impact headings */
 h1, h2, h3 { 
-    color: #ffffff; 
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: #ffffff !important; 
+    font-weight: 800 !important;
+    letter-spacing: -0.035em !important;
     margin-bottom: 0.5rem;
 }
 
@@ -71,10 +72,11 @@ h1, h2, h3 {
   box-shadow: 0 10px 25px var(--glow);
 }
 
-.small-muted { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+.small-muted { color: var(--text-muted); font-size: 15px; line-height: 1.6; font-weight: 500; }
 
 /* Premium, Animated Call-to-Action Button */
 .stButton>button {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   background: linear-gradient(135deg, var(--primary), var(--accent)) !important;
   color: white !important; 
   border: none; 
@@ -91,13 +93,14 @@ h1, h2, h3 {
     box-shadow: 0 8px 30px var(--glow);
 }
 
-/* Modern inputs with focus states */
+/* Modern inputs with JetBrains Mono font for code readability */
 textarea, [data-baseweb="input"] { 
     background-color: rgba(0,0,0,0.3) !important; 
     color: var(--text-main) !important;
     border: 1px solid var(--glass-border) !important;
     border-radius: 10px !important;
-    font-family: 'Fira Code', monospace !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 14px !important;
 }
 
 textarea:focus {
@@ -112,13 +115,14 @@ textarea:focus {
   padding: 20px; 
   border-radius: 14px; 
   color: #c7d2fe; 
-  font-family: 'Fira Code', monospace; 
+  font-family: 'JetBrains Mono', monospace; 
+  font-size: 14px;
   white-space: pre-wrap; 
   overflow:auto;
   margin-top: 15px;
 }
 
-/* Polished Scrollbar for code blocks */
+/* Scrollbar styling */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 5px; }
@@ -169,7 +173,6 @@ with tab_input:
     st.markdown("### Paste your source code below")
     st.markdown("<div class='small-muted' style='margin-bottom: 16px;'>For the highest quality response, also paste the entire error or traceback sequence (optional).</div>", unsafe_allow_html=True)
 
-    # Clean two-column input layout
     left, right = st.columns([2, 1])
     with left:
         broken_code_input = st.text_area(
@@ -189,14 +192,12 @@ with tab_input:
             key="error_input",
         )
 
-    # Advanced options are now premium settings
     with st.expander("⚙️ Fine-Tune Analysis Parameters"):
         temp = st.slider("Temperature (0.0=Deterministic, 1.0=Creative)", min_value=0.0, max_value=1.0, value=0.2, step=0.05)
         max_tokens = st.slider("Max Response Tokens", min_value=128, max_value=2048, value=800, step=64)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Primary Action Row
     action_col, status_col = st.columns([1, 2.5])
     with action_col:
         analyze = st.button("🚀 Diagnose & Fix", help="Initiate AI analysis", use_container_width=True)
@@ -212,7 +213,7 @@ with tab_examples:
     st.markdown("- 🔵 `TypeError` (invalid operation sequence detection)")
     st.info("Pro Tip: Context is key. The more environmental data you can provide (like the full error box), the faster the AI can precisely optimize your solution.")
 
-st.markdown("</div>", unsafe_allow_html=True)  # close card
+st.markdown("</div>", unsafe_allow_html=True)
 
 if analyze:
     if not broken_code_input or not broken_code_input.strip():
@@ -243,7 +244,6 @@ if analyze:
 
                 st.balloons()
                 
-                # New card for the premium output sequence
                 st.markdown("<div class='card'>", unsafe_allow_html=True)
                 st.markdown("### 🛠️ AI Tutor Solution")
                 st.divider()
@@ -283,7 +283,7 @@ if analyze:
                     with copy_col:
                         copy_id = "copy-btn-" + uuid.uuid4().hex
                         copy_html = f"""
-                        <button id='{copy_id}' style='background:linear-gradient(135deg,#7c7fed,#f472b6);color:white;border:none;border-radius:14px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:Inter;letter-spacing:-0.02em;transition:all 0.3s ease;'>📋 Copy Code</button>
+                        <button id='{copy_id}' style='background:linear-gradient(135deg,#7c7fed,#f472b6);color:white;border:none;border-radius:14px;padding:10px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif;letter-spacing:-0.02em;transition:all 0.3s ease;'>📋 Copy Code</button>
                         <script>
                         const btn = document.getElementById('{copy_id}');
                         if (btn) {{
@@ -311,7 +311,7 @@ if analyze:
                     st.markdown("**Model Output:**")
                     st.markdown(f"<div class='output-code'>{response_text}</div>", unsafe_allow_html=True)
                 
-                st.markdown("</div>", unsafe_allow_html=True) # close output card
+                st.markdown("</div>", unsafe_allow_html=True)
 
             except Exception as e:
                 st.error(f"An error occurred during API call: {e}")
