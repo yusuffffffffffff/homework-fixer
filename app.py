@@ -80,7 +80,8 @@ with st.container():
         st.markdown("<div class='header-left'>", unsafe_allow_html=True)
         st.markdown("<div style='margin-left:8px'>")
         st.markdown("<h1 style='margin:0'>EduFix AI</h1>")
-        st.markdown("<div class='small-muted'>Your friendly, encouraging code tutor — instant fixes & clear explanations</div>")
+        # Improved descriptive text
+        st.markdown("<div class='small-muted'>An encouraging code tutor that explains problems clearly and returns working fixes.</div>")
         st.markdown("</div>")
         st.markdown("</div>")
 
@@ -90,7 +91,8 @@ st.markdown("<div class='card'>", unsafe_allow_html=True)
 tab_input, tab_examples = st.tabs(["🔧 Input", "💡 Examples & Tips"])
 
 with tab_input:
-    st.markdown("### Paste your code and (optionally) the error message below")
+    st.markdown("### Paste your code below")
+    st.markdown("For the most accurate suggestions, also paste the full error or traceback (optional).")
 
     # Two-column layout for code + error
     left, right = st.columns([2, 1])
@@ -107,7 +109,7 @@ with tab_input:
         error_input = st.text_area(
             "",
             height=300,
-            placeholder="Traceback (most recent call last): ...",
+            placeholder="Full traceback or compiler error (optional)",
             label_visibility="collapsed",
             key="error_input",
         )
@@ -123,14 +125,15 @@ with tab_input:
         analyze = st.button("🚀 Analyze & Fix My Code")
 
     with status_col:
-        st.markdown("<div class='small-muted'>Tip: For best results include the full traceback or the compiler error copy-pasted.</div>", unsafe_allow_html=True)
+        st.markdown("<div class='small-muted'>Tip: Paste the entire error or traceback (including file and line numbers) for a more precise fix.</div>", unsafe_allow_html=True)
 
 with tab_examples:
-    st.markdown("### Quick examples")
-    st.markdown("- Missing colon in function or for/if statement")
-    st.markdown("- IndentationError in Python when mixing tabs and spaces")
-    st.markdown("- NameError when variable is referenced before assignment")
-    st.markdown("\nUse the Input tab to paste your code and run the analyzer.")
+    st.markdown("### Common issues the tool handles")
+    st.markdown("- Missing colon in a function, loop, or conditional")
+    st.markdown("- Indentation errors from mixing tabs and spaces")
+    st.markdown("- NameError: using a variable before it’s defined")
+    st.markdown("- TypeError from invalid operations or wrong function arguments")
+    st.markdown("\nTip: Paste both code and the exact error message to help the tutor pinpoint the issue faster.")
 
 # Outcome area
 st.markdown("</div>", unsafe_allow_html=True)  # close card
@@ -139,16 +142,17 @@ st.divider()
 
 if analyze:
     if not broken_code_input or not broken_code_input.strip():
-        st.warning("Please paste some code first!")
+        st.warning("Please paste your code before running the analyzer.")
     else:
         with st.spinner("🧠 AI Agent diagnosing your script..."):
             try:
                 system_instructions = (
-                    "You are an expert, encouraging computer science tutor. "
-                    "A student will give you broken code and an error message. "
-                    "First, point out the exact line where the mistake is. "
-                    "Second, explain the fix in simple, universal language under 3 sentences. "
-                    "Third, output the completely fixed, working code block."
+                    "You are an expert and encouraging computer science tutor. "
+                    "When given broken code and an optional error message, do the following: "
+                    "1) Identify the exact line(s) causing the problem. "
+                    "2) Explain the fix in clear, friendly language (no more than 3 sentences). "
+                    "3) Provide the full, corrected code inside a single fenced code block. "
+                    "If the language is unclear, assume Python. Keep the response concise and focused on the student learning the fix."
                 )
 
                 completion = client.chat.completions.create(
@@ -186,14 +190,14 @@ if analyze:
 
                 # Present the result in a nice layout
                 st.balloons()
-                st.success("Analysis Complete!")
+                st.success("Analysis complete — see the suggested fix below.")
 
-                st.markdown("### 🛠️ AI Tutor Solution")
+                st.markdown("### 🛠️ AI Tutor — Suggested Fix")
 
                 # Try to split explanation and fixed code if the model used code fences
                 fixed_code = None
-                explanation = response_text
-                if "```" in response_text:
+                explanation = response_text or ""
+                if response_text and "```" in response_text:
                     parts = response_text.split("```")
                     # Either: [text, lang+code, text] or [text, code]
                     if len(parts) >= 2:
@@ -214,7 +218,7 @@ if analyze:
                     st.markdown(f"**Explanation:** {explanation}")
 
                 if fixed_code:
-                    st.markdown("**Fixed Code:**")
+                    st.markdown("**Fixed Code (ready to copy):**")
                     st.code(fixed_code, language='python')
                 else:
                     st.markdown("**Model output:**")
@@ -223,4 +227,4 @@ if analyze:
             except Exception as e:
                 st.error(f"An error occurred: {e}")
 
-st.markdown("<div class='footer'>Built with 🧠 by an 18-year-old founder — improved UI & layout</div>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>Built with care by an 18‑year‑old founder • EduFix AI</div>", unsafe_allow_html=True)
