@@ -472,8 +472,11 @@ with right_col:
                     message_placeholder = st.empty()
                     
                     # Contextual awareness prompt
-                    context_prompt = f"""You are an elite, friendly coding assistant for EduFix AI. 
-The user is currently working on this code in their terminal:
-
-```{language}
-{broken_code_input}
+                    context_prompt = (
+                        "You are an elite, friendly coding assistant for EduFix AI. "
+                        "The user is currently working on this code in their terminal:\n\n"
+                        f"```{language}\n"
+                        f"{broken_code_input}\n"
+                        "```\n\n"
+                        "Answer their following question directly, concisely, and helpfully."
+                    )
