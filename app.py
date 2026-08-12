@@ -100,7 +100,7 @@ with tab_input:
     left, right = st.columns([2, 1])
     with left:
         broken_code_input = st.text_area(
-            "",
+            "Code Input",
             height=300,
             placeholder="def my_function():\n    print('Hello')",
             label_visibility="collapsed",
@@ -109,7 +109,7 @@ with tab_input:
 
     with right:
         error_input = st.text_area(
-            "",
+            "Error Input",
             height=300,
             placeholder="Full traceback or compiler error (optional)",
             label_visibility="collapsed",
@@ -133,7 +133,7 @@ with tab_examples:
     st.markdown("### Common issues the tool handles")
     st.markdown("- Missing colon in a function, loop, or conditional")
     st.markdown("- Indentation errors from mixing tabs and spaces")
-    st.markdown("- NameError: using a variable before it’s defined")
+    st.markdown("- NameError: using a variable before it's defined")
     st.markdown("- TypeError from invalid operations or wrong function arguments")
     st.markdown("\nTip: Paste both code and the exact error message to help the tutor pinpoint the issue faster.")
 
@@ -167,28 +167,8 @@ if analyze:
                     max_tokens=int(max_tokens),
                 )
 
-                # Try to robustly extract the assistant content from common response shapes
-                response_text = None
-                try:
-                    choices = getattr(completion, "choices", None) or (completion.get("choices") if isinstance(completion, dict) else None)
-                    if choices:
-                        first = choices[0] if isinstance(choices, (list, tuple)) else choices
-                        if isinstance(first, dict):
-                            response_text = first.get("message", {}).get("content") or first.get("text")
-                        else:
-                            msg = getattr(first, "message", None)
-                            if msg:
-                                response_text = getattr(msg, "content", None) or (msg.get("content") if isinstance(msg, dict) else None)
-                            else:
-                                response_text = getattr(first, "text", None)
-                except Exception:
-                    response_text = None
-
-                if not response_text:
-                    try:
-                        response_text = str(completion)
-                    except Exception:
-                        response_text = "Could not parse model response."
+                # Extract the assistant content from the response
+                response_text = completion.choices[0].message.content
 
                 # Present the result in a nice layout
                 st.balloons()
