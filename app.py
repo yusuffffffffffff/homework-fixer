@@ -1,5 +1,5 @@
 import streamlit as st
-from groq import Groq
+import requests
 import json
 import uuid
 
@@ -11,7 +11,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Initialize Chat History in Session State
+# Backend URL & Default User Configuration
+BACKEND_URL = "http://127.0.0.1:8000/fix-code"
+DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000001"
+
+# Initialize Chat History and Tokens in Session State
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -233,15 +237,6 @@ textarea:focus {
     box-shadow: inset 0 4px 15px rgba(0,0,0,0.6), 0 0 20px var(--glow-cyan) !important;
 }
 
-/* Chat Input Bar */
-[data-testid="stChatInput"] {
-    border-radius: 18px !important;
-    border: 1.5px solid var(--primary) !important;
-    background: rgba(8, 12, 24, 0.95) !important;
-    backdrop-filter: blur(15px) !important;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5) !important;
-}
-
 /* macOS Cyber Terminal Header */
 .mac-header {
     background: linear-gradient(180deg, #181b29, #111320);
@@ -290,14 +285,6 @@ textarea:focus {
 
 st.markdown(f"<style>{CUSTOM_CSS}</style>", unsafe_allow_html=True)
 
-# Connect to Groq API securely
-GROQ_API_KEY = st.secrets.get("GROQ_API_KEY")
-if not GROQ_API_KEY:
-    st.error("🔑 GROQ_API_KEY is missing from Streamlit secrets. Please add it and restart the app.")
-    st.stop()
-
-client = Groq(api_key=GROQ_API_KEY)
-
 # Sample Bug Library
 SAMPLE_BUGS = {
     "Select Sample...": ("", ""),
@@ -312,18 +299,6 @@ SAMPLE_BUGS = {
     "🦀 Rust: Borrow Checker Bug": (
         "fn main() {\n    let mut s = String::from(\"hello\");\n    let r1 = &s;\n    let r2 = &s;\n    let r3 = &mut s;\n    println!(\"{}, {}, {}\", r1, r2, r3);\n}",
         "error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable"
-    ),
-    "🗄️ SQL: JOIN Syntax Ambiguity": (
-        "SELECT id, name, department_name \nFROM users \nJOIN departments ON users.dept_id = departments.id\nWHERE id = id;",
-        "ERROR: column reference \"id\" is ambiguous"
-    ),
-    "⚡ JS: Scope & Async Error": (
-        "async function fetchUserData(userId) {\n  let user = await api.getUser(userId);\n  console.log(user.name);\n}\nconsole.log(user.name);",
-        "ReferenceError: user is not defined at line 5"
-    ),
-    "⚙️ C++: Off-by-One Array Bug": (
-        "#include <iostream>\nusing namespace std;\n\nint main() {\n    int arr[5] = {1, 2, 3, 4, 5};\n    for(int i=0; i<=5; i++) {\n        cout << arr[i] << endl;\n    }\n    return 0;\n}",
-        "Segmentation fault (core dumped)"
     )
 }
 
@@ -335,11 +310,11 @@ st.markdown(
             <div class='logo-badge'>⚡</div>
             <div>
                 <h1 style='margin:0; font-size:30px;'>EduFix <span style='color: #06b6d4;'>AI</span> <span style='font-size:12px; color:#c7d2fe; font-weight:700; padding: 3px 10px; border: 1px solid rgba(199, 210, 254, 0.4); border-radius: 12px; margin-left: 8px; background: rgba(99, 102, 241, 0.2); box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);'>STUDIO v4.0 PRO</span></h1>
-                <div style='color:#94a3b8; font-size:14px; font-weight:500;'>Cybernetic Code Analysis & Autonomous CS Tutor</div>
+                <div style='color:#94a3b8; font-size:14px; font-weight:500;'>FastAPI + Supabase Integrated Backend</div>
             </div>
         </div>
         <div class='status-badge'>
-            <div class='pulse-dot'></div> Llama-3.1-8b Engine Active
+            <div class='pulse-dot'></div> FastAPI Backend Connected
         </div>
     </div>
     """,
@@ -352,7 +327,7 @@ left_col, right_col = st.columns([1.1, 1], gap="large")
 # ================= LEFT COLUMN: TERMINAL =================
 with left_col:
     st.markdown("### 💻 Quantum Code Terminal")
-    st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:16px;'>Feed your source code and telemetry logs into the neural diagnostic matrix.</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:16px;'>Feed your source code into the neural diagnostic matrix.</div>", unsafe_allow_html=True)
 
     ctrl_col1, ctrl_col2 = st.columns([1, 1.2])
     with ctrl_col1:
@@ -402,211 +377,87 @@ with left_col:
                 <span class="mac-btn mac-close"></span>
                 <span class="mac-btn mac-min"></span>
                 <span class="mac-btn mac-max"></span>
-                <span class="mac-title">terminal.log</span>
+                <span class="mac-title">user_id.config</span>
             </div>
-            <div class="mac-status-tag" style="color: #f43f5e; background: rgba(244, 63, 94, 0.1); border-color: rgba(244, 63, 94, 0.3);">TELEMETRY</div>
+            <div class="mac-status-tag" style="color: #38bdf8; background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3);">SUPABASE USER</div>
         </div>
         """,
         unsafe_allow_html=True
     )
-    error_input = st.text_area(
-        "Traceback / Error Output (Optional)",
-        value=err_val,
-        height=110,
-        placeholder="Paste compiler errors or logs here...",
-        key="error_input_area",
+    user_id_input = st.text_input(
+        "User UUID (Supabase ID)",
+        value=DEFAULT_USER_ID,
+        key="user_id_input",
         label_visibility="collapsed"
     )
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    with st.expander("⚙️ Neural Hyper-Parameters"):
-        p_col1, p_col2 = st.columns(2)
-        with p_col1:
-            temp = st.slider("Temperature (Creativity)", min_value=0.0, max_value=1.0, value=0.2, step=0.05)
-        with p_col2:
-            max_tokens = st.slider("Max Token Response Limit", min_value=256, max_value=2048, value=1024, step=64)
 
     st.markdown("<br>", unsafe_allow_html=True)
     analyze = st.button("🚀 Initialize Neural Diagnostics", use_container_width=True)
 
 
-# ================= RIGHT COLUMN: DIAGNOSTICS & CHAT =================
+# ================= RIGHT COLUMN: DIAGNOSTICS =================
 with right_col:
-    tab_diag, tab_chat = st.tabs(["📊 Diagnostic Hub", "💬 Live AI Assistant"])
+    st.markdown("### 📊 Diagnostic Hub")
     
-    # ---------------- TAB 1: DIAGNOSTIC HUB ----------------
-    with tab_diag:
-        if not analyze:
-            st.markdown("### 🧠 Diagnostic Hub Standby")
-            st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:20px;'>Input code on the left and trigger <b>Initialize Neural Diagnostics</b> to deploy:</div>", unsafe_allow_html=True)
+    if not analyze:
+        st.markdown("<div style='color:#94a3b8; font-size:13.5px; margin-bottom:20px;'>Input code on the left and trigger <b>Initialize Neural Diagnostics</b> to call your FastAPI backend:</div>", unsafe_allow_html=True)
 
-            st.markdown(
-                """
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>🎯 Root Cause Isolation</h4>
-                    <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Instantly maps execution bottlenecks and structural logical errors.</p>
-                </div>
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>📚 CS Theory & Blueprint</h4>
-                    <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Deep explanation of underlying principles without unnecessary friction.</p>
-                </div>
-                <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
-                    <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>⚡ Refactored Clean Code</h4>
-                    <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Production-ready code blocks accompanied by 1-click clipboard utility.</p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        st.markdown(
+            """
+            <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
+                <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>⚡ Token Verification</h4>
+                <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Automatically verifies and deducts 1 token from your Supabase table.</p>
+            </div>
+            <div style='background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); padding:20px; border-radius:16px; margin-bottom:14px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);'>
+                <h4 style='margin:0; font-size:15px; color:#c7d2fe; display:flex; align-items:center; gap:10px;'>🤖 Groq AI Refactoring</h4>
+                <p style='margin:8px 0 0 0; font-size:13px; color:#94a3b8;'>Generates fixed code and explanations powered by Llama-3.1.</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
+    else:
+        if not broken_code_input or not broken_code_input.strip():
+            st.warning("⚠️ Terminal is empty. Please enter or load code snippets before running diagnostics.")
         else:
-            if not broken_code_input or not broken_code_input.strip():
-                st.warning("⚠️ Terminal is empty. Please enter or load code snippets before running diagnostics.")
-            else:
-                with st.spinner("⚡ Running deep neural code scan..."):
-                    try:
-                        system_instructions = (
-                            "You are an elite Computer Science Professor and Autonomous AI Code Tutor. "
-                            f"Language context: {language}.\n"
-                            "When analyzing broken code, strictly follow this clear format:\n"
-                            "### 🔍 Root Cause Analysis\n"
-                            "Pinpoint the line number and core issue in 1-2 clear sentences.\n\n"
-                            "### 💡 Conceptual Breakdown\n"
-                            "Explain *why* the bug occurred and the concept needed to avoid it in 2-3 friendly sentences.\n\n"
-                            "### 🛠️ Refactored Solution\n"
-                            "Provide the full fixed code inside a single fenced markdown block.\n\n"
-                            "### ⚡ Pro CS Tip\n"
-                            "Give one quick best practice tip regarding time complexity, readability, or standards."
-                        )
+            with st.spinner("⚡ Requesting fix from FastAPI backend & deducting token..."):
+                try:
+                    # Prepare request payload for FastAPI backend
+                    payload = {
+                        "user_id": user_id_input.strip(),
+                        "code_snippet": broken_code_input
+                    }
 
-                        completion = client.chat.completions.create(
-                            model="llama-3.1-8b-instant",
-                            messages=[
-                                {"role": "system", "content": system_instructions},
-                                {"role": "user", "content": f"Language: {language}\n\nCode:\n{broken_code_input}\n\nError:\n{error_input}"}
-                            ],
-                            temperature=float(temp),
-                            max_tokens=int(max_tokens),
-                        )
+                    # Call your local FastAPI backend
+                    response = requests.post(BACKEND_URL, json=payload, timeout=15)
 
-                        response_text = completion.choices[0].message.content
+                    if response.status_code == 200:
+                        res_data = response.json()
+                        fixed_code_response = res_data.get("fixed_code", "")
+                        tokens_remaining = res_data.get("Tokens_remaining", 0)
+
                         st.balloons()
+
+                        # Display Token Count Badge
+                        st.success(f"🎟️ **Token Deducted Successfully!** Remaining Tokens: **{tokens_remaining}**")
 
                         st.markdown("### 📊 Diagnostic Results")
                         st.divider()
 
-                        # Extract Code Block
-                        fixed_code = None
-                        if response_text and "```" in response_text:
-                            parts = response_text.split("```")
-                            if len(parts) >= 2:
-                                code_block = parts[1]
-                                code_lines = code_block.splitlines()
-                                if code_lines and code_lines[0].strip().isalpha():
-                                    fixed_code = "\n".join(code_lines[1:]).strip()
-                                else:
-                                    fixed_code = code_block.strip()
+                        # Render Groq AI Response
+                        st.markdown(fixed_code_response)
 
-                        st.markdown(response_text)
+                    elif response.status_code == 400:
+                        st.error("⚠️ Out of tokens! Please top up your token balance in Supabase.")
+                    elif response.status_code == 404:
+                        st.error(f"❌ User ID (`{user_id_input}`) not found in your Supabase `Profiles` table.")
+                    else:
+                        st.error(f"❌ Backend Error ({response.status_code}): {response.text}")
 
-                        if fixed_code:
-                            st.divider()
-                            d_col1, d_col2 = st.columns([1, 1])
-                            with d_col1:
-                                st.download_button(
-                                    label="📥 Export Fixed Code",
-                                    data=fixed_code,
-                                    file_name="fixed_code.txt",
-                                    mime="text/plain",
-                                    use_container_width=True
-                                )
-                            with d_col2:
-                                copy_id = "copy-btn-" + uuid.uuid4().hex
-                                copy_html = f"""
-                                <button id='{copy_id}' style='background:linear-gradient(135deg,#6366f1,#06b6d4);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:11px 10px;cursor:pointer;width:100%;font-weight:700;font-family:"Plus Jakarta Sans", sans-serif; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4); transition: all 0.3s ease;'>📋 Copy Solution</button>
-                                <script>
-                                const btn = document.getElementById('{copy_id}');
-                                if (btn) {{
-                                  btn.addEventListener('click', async () => {{
-                                    try {{
-                                      await navigator.clipboard.writeText({json.dumps(fixed_code)});
-                                      btn.innerText = '✅ Copied to Clipboard!';
-                                      setTimeout(() => {{ btn.innerText = '📋 Copy Solution'; }}, 2500);
-                                    }} catch(e) {{
-                                      btn.innerText = '❌ Failed';
-                                      setTimeout(() => {{ btn.innerText = '📋 Copy Solution'; }}, 2500);
-                                    }}
-                                  }});
-                                }}
-                                </script>
-                                """
-                                st.markdown(copy_html, unsafe_allow_html=True)
-
-                    except Exception as e:
-                        st.error(f"❌ Neural Processing Error: {e}")
-
-    # ---------------- TAB 2: LIVE AI ASSISTANT ----------------
-    with tab_chat:
-        st.markdown("### 🤖 Interactive Tutor Chat")
-        st.markdown(
-            "<div style='color:#94a3b8; font-size:13.5px; margin-bottom:15px;'>"
-            "Consult the neural assistant regarding architecture optimization, edge-cases, or theoretical concepts."
-            "</div>",
-            unsafe_allow_html=True
-        )
-
-        chat_container = st.container()
-
-        with chat_container:
-            if not st.session_state.messages:
-                st.info("👋 Hello! I am your EduFix Neural Assistant. Run diagnostics or ask me any question about your codebase right now!")
-
-            for msg in st.session_state.messages:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
-
-        if prompt := st.chat_input("Ask a follow-up question..."):
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with chat_container:
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-
-            with chat_container:
-                with st.chat_message("assistant"):
-                    with st.spinner("Synthesizing response..."):
-                        try:
-                            code_context = broken_code_input.strip() if broken_code_input else "No code loaded."
-                            sys_prompt = (
-                                "You are an elite, friendly computer science professor and assistant for EduFix AI Studio. "
-                                f"Language context: {language}.\n\n"
-                                "Current active code in user terminal:\n"
-                                "```\n"
-                                f"{code_context}\n"
-                                "```\n\n"
-                                "Answer clearly, concisely, and provide helpful code examples when appropriate."
-                            )
-
-                            api_messages = [{"role": "system", "content": sys_prompt}]
-                            for m in st.session_state.messages:
-                                api_messages.append({"role": m["role"], "content": m["content"]})
-
-                            response = client.chat.completions.create(
-                                model="llama-3.1-8b-instant",
-                                messages=api_messages,
-                                temperature=0.5,
-                                max_tokens=800,
-                            )
-
-                            ai_reply = response.choices[0].message.content
-                            st.markdown(ai_reply)
-                            st.session_state.messages.append({"role": "assistant", "content": ai_reply})
-
-                        except Exception as e:
-                            st.error(f"❌ Assistant Error: {e}")
-            
-            st.rerun()
+                except requests.exceptions.ConnectionError:
+                    st.error("🔌 Could not connect to FastAPI backend! Make sure your Uvicorn server is running on `http://127.0.0.1:8000`.")
+                except Exception as e:
+                    st.error(f"❌ Error: {e}")
 
 # --------- Footer ---------
 st.markdown("<div class='footer'>CRAFTED WITH 💡 BY AN 18.YEAR.OLD FOUNDER • EDUFIX AI STUDIO V4.0 PRO</div>", unsafe_allow_html=True)
-
-st.markdown("<p style='text-align: center;'><a href='https://discord.gg' target='_blank' style='color: #FF4B4B; text-decoration: none; font-weight: bold;'>💬 Join the Official EduFix Discord Community</a></p>", unsafe_allow_html=True)
