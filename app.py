@@ -58,13 +58,19 @@ CUSTOM_CSS = """
   --border-strong: rgba(255, 255, 255, 0.16);
   --text-main: #E9EAEE;
   --text-muted: #8B8F9B;
-  --add: #4FCB7C;
-  --add-bg: rgba(79, 203, 124, 0.10);
-  --remove: #E5677A;
-  --remove-bg: rgba(229, 103, 122, 0.10);
+  --add: #34D399;
+  --add-bg: rgba(52, 211, 153, 0.12);
+  --remove: #F0525F;
+  --remove-bg: rgba(240, 82, 95, 0.12);
   --accent: #F2A93B;
   --accent-dim: rgba(242, 169, 59, 0.16);
-  --teal: #2FA8A3;
+  /* Decorative palette — used for brand flourishes (gradients, glows,
+     language tags). Kept separate from --add/--remove so diff colors
+     always stay semantic, never just decoration. */
+  --teal: #22D3EE;
+  --pink: #EC4899;
+  --violet: #8B5CF6;
+  --blue: #38BDF8;
   --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
@@ -85,14 +91,15 @@ html, body, [class*="css"] {
   position: fixed;
   inset: 0;
   overflow: hidden;
-  z-index: -2;
+  z-index: 0;
   pointer-events: none;
+  animation: hue-shift 90s linear infinite;
 }
 .aurora-blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(100px);
-  opacity: 0.30;
+  opacity: 0.34;
   mix-blend-mode: screen;
   will-change: transform;
 }
@@ -110,10 +117,17 @@ html, body, [class*="css"] {
 }
 .blob-3 {
   width: 380px; height: 380px;
-  background: var(--remove);
+  background: var(--violet);
   bottom: -180px; left: 28%;
-  opacity: 0.20;
+  opacity: 0.26;
   animation: drift-c 46s ease-in-out infinite;
+}
+.blob-4 {
+  width: 340px; height: 340px;
+  background: var(--pink);
+  top: 55%; left: 42%;
+  opacity: 0.20;
+  animation: drift-d 52s ease-in-out infinite;
 }
 @keyframes drift-a {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -129,16 +143,28 @@ html, body, [class*="css"] {
   40%      { transform: translate(50px, -20px) scale(1.05); }
   70%      { transform: translate(-40px, 10px) scale(0.96); }
 }
+@keyframes drift-d {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(45px, 35px) scale(1.12); }
+}
+@keyframes hue-shift {
+  from { filter: hue-rotate(0deg); }
+  to   { filter: hue-rotate(360deg); }
+}
 .grain-overlay {
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   opacity: 0.035;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-[data-testid="stAppViewContainer"] { background: var(--bg); color: var(--text-main); }
+html, body {
+    background: var(--bg);
+}
+
+[data-testid="stAppViewContainer"] { background: transparent; color: var(--text-main); }
 .stApp { background: transparent; }
 
 h1, h2, h3, h4 {
@@ -149,14 +175,14 @@ h1, h2, h3, h4 {
 }
 
 .shine-text {
-  background: linear-gradient(100deg, #ffffff 20%, var(--accent) 42%, #ffffff 64%);
-  background-size: 220% auto;
+  background: linear-gradient(100deg, var(--accent) 0%, var(--pink) 26%, var(--violet) 50%, var(--teal) 74%, var(--accent) 100%);
+  background-size: 300% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: shine 7s linear infinite;
+  animation: shine 9s linear infinite;
 }
-@keyframes shine { to { background-position: -220% center; } }
+@keyframes shine { to { background-position: -300% center; } }
 
 /* ---------- Panels & tabs ---------- */
 [data-testid="stTabPanel"] {
@@ -184,12 +210,20 @@ h1, h2, h3, h4 {
   font-size: 13.5px !important;
   border: none !important;
   padding: 0px 22px !important;
+  position: relative !important;
   transition: color 0.2s ease, background 0.2s ease !important;
 }
 [data-testid="stTabs"] [aria-selected="true"] {
   background: var(--panel) !important;
   color: #ffffff !important;
-  box-shadow: inset 0 -2px 0 var(--accent) !important;
+}
+[data-testid="stTabs"] [aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 14px; right: 14px; bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--pink), var(--teal));
 }
 
 /* ---------- Header ---------- */
@@ -203,8 +237,9 @@ h1, h2, h3, h4 {
 }
 .brand-title { display: flex; align-items: center; gap: 16px; }
 .logo-badge {
-  background: var(--panel-raised);
-  border: 1px solid var(--border-strong);
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 26px rgba(242, 169, 59, 0.3);
   width: 56px; height: 56px;
   border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
@@ -238,14 +273,15 @@ h1, h2, h3, h4 {
 .stat-chip {
   background: var(--panel-raised);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
   border-radius: 10px;
   padding: 10px 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11.5px;
   color: var(--text-muted);
-  transition: border-color .15s ease;
+  transition: border-color .15s ease, transform .15s ease;
 }
-.stat-chip:hover { border-color: var(--border-strong); }
+.stat-chip:hover { border-color: var(--border-strong); transform: translateY(-1px); }
 .stat-chip b {
   color: #fff;
   font-family: 'Space Grotesk', sans-serif;
@@ -253,6 +289,12 @@ h1, h2, h3, h4 {
   display: block;
   margin-top: 3px;
 }
+.stat-chip.c-amber  { border-left-color: var(--accent); }
+.stat-chip.c-amber b  { color: var(--accent); }
+.stat-chip.c-violet { border-left-color: var(--violet); }
+.stat-chip.c-violet b { color: var(--violet); }
+.stat-chip.c-teal   { border-left-color: var(--teal); }
+.stat-chip.c-teal b   { color: var(--teal); }
 
 /* ---------- Chat bubbles ---------- */
 [data-testid="stChatMessage"] {
@@ -261,23 +303,38 @@ h1, h2, h3, h4 {
     border-radius: 12px !important;
     padding: 16px !important;
     margin-bottom: 14px !important;
+    position: relative !important;
+    overflow: hidden !important;
     transition: border-color .15s ease;
 }
 [data-testid="stChatMessage"]:hover { border-color: var(--border-strong) !important; }
+[data-testid="stChatMessage"]::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--accent));
+}
 
 /* ---------- Buttons ---------- */
 .stButton>button {
   font-family: 'Space Grotesk', sans-serif !important;
-  background: var(--accent) !important;
+  background: linear-gradient(120deg, var(--accent) 0%, var(--pink) 100%) !important;
+  background-size: 180% 180% !important;
+  background-position: 0% 50% !important;
   color: #14110A !important;
   border: none !important;
   padding: 15px 24px !important;
   font-weight: 700 !important;
   font-size: 15px !important;
   border-radius: 10px !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-position 0.5s ease !important;
 }
-.stButton>button:hover { transform: translateY(-1px) !important; box-shadow: 0 8px 24px rgba(242, 169, 59, 0.35) !important; }
+.stButton>button:hover {
+  transform: translateY(-1px) !important;
+  background-position: 100% 50% !important;
+  box-shadow: 0 8px 26px rgba(236, 72, 153, 0.3), 0 4px 18px rgba(242, 169, 59, 0.25) !important;
+}
 .stButton>button:active { transform: translateY(0) !important; }
 
 .stDownloadButton>button {
@@ -321,7 +378,10 @@ textarea:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 1px v
   font-family: 'Space Grotesk', sans-serif !important;
   font-size: 12.5px !important;
 }
-[data-testid="stRadio"] label:has(input:checked) { background: var(--accent) !important; color: #14110A !important; }
+[data-testid="stRadio"] label:has(input:checked) {
+  background: linear-gradient(120deg, var(--accent), var(--pink)) !important;
+  color: #14110A !important;
+}
 
 /* ---------- Terminal chrome ---------- */
 .mac-header {
@@ -364,7 +424,14 @@ textarea:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 1px v
 }
 .patch-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-soft); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-.patch-header { background: var(--panel-raised); border-bottom: 1px solid var(--border); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+.patch-header { background: var(--panel-raised); border-bottom: 1px solid var(--border); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+.patch-header::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--pink), var(--violet), var(--teal));
+}
 .patch-filename { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-main); }
 .patch-stats { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 .patch-stats .add { color: var(--add); }
@@ -389,6 +456,8 @@ textarea:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 1px v
 .diff-sbs-col:first-child { border-right: 1px solid var(--border); }
 .diff-sbs-col { background: #0E0F13; }
 .diff-sbs-header { background: var(--panel-raised); padding: 8px 14px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 11.5px; color: var(--text-muted); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.05em; }
+.diff-sbs-col:first-child .diff-sbs-header { color: var(--remove); }
+.diff-sbs-col:last-child .diff-sbs-header { color: var(--add); }
 .diff-sbs-row { padding: 1px 12px; min-height: 18px; }
 .diff-sbs-row.remove { background: var(--remove-bg); }
 .diff-sbs-row.add { background: var(--add-bg); }
@@ -400,8 +469,8 @@ textarea:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 1px v
     font-family: 'JetBrains Mono', monospace;
     font-size: 13.5px;
     color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid rgba(242, 169, 59, 0.25);
+    background: linear-gradient(120deg, var(--accent-dim), rgba(236, 72, 153, 0.12));
+    border: 1px solid rgba(242, 169, 59, 0.3);
     border-radius: 8px;
     padding: 10px 16px;
     display: inline-flex; align-items: center; gap: 10px;
@@ -425,10 +494,14 @@ textarea:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 1px v
 .thinking-dots span:nth-child(3) { animation-delay: .3s; }
 @keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: .4; } 40% { transform: scale(1); opacity: 1; } }
 
-.info-card { background: var(--panel-raised); border: 1px solid var(--border); padding: 18px; border-radius: 12px; margin-bottom: 12px; transition: border-color .15s ease, transform .15s ease; }
+.info-card { background: var(--panel-raised); border: 1px solid var(--border); border-left: 3px solid var(--border-strong); padding: 18px; border-radius: 12px; margin-bottom: 12px; transition: border-color .15s ease, transform .15s ease; }
 .info-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
 .info-card h4 { margin: 0; font-size: 14.5px; color: #E9EAEE; font-family: 'Space Grotesk', sans-serif !important; }
 .info-card p { margin: 6px 0 0 0; font-size: 13px; color: var(--text-muted); }
+.info-card:nth-of-type(4n+1) { border-left-color: var(--accent); }
+.info-card:nth-of-type(4n+2) { border-left-color: var(--teal); }
+.info-card:nth-of-type(4n+3) { border-left-color: var(--violet); }
+.info-card:nth-of-type(4n+4) { border-left-color: var(--pink); }
 
 .footer { color: var(--text-muted); font-size: 12.5px; text-align: center; padding: 36px 0 18px 0; font-weight: 500; }
 .footer a { transition: opacity .15s ease; }
@@ -444,6 +517,7 @@ st.markdown(
         <div class="aurora-blob blob-1"></div>
         <div class="aurora-blob blob-2"></div>
         <div class="aurora-blob blob-3"></div>
+        <div class="aurora-blob blob-4"></div>
     </div>
     <div class="grain-overlay"></div>
     """,
@@ -486,6 +560,34 @@ SAMPLE_BUGS = {
         "Segmentation fault (core dumped)"
     )
 }
+
+# ============================================================
+#  LANGUAGE COLORS
+#  Each language gets its own recognizable accent (loosely brand-matched)
+#  so color carries real meaning here, not just decoration — the source
+#  terminal and history entries tint themselves to whatever you're
+#  debugging.
+# ============================================================
+LANGUAGE_COLORS = {
+    "Python": "#FFD43B",
+    "JavaScript / React": "#61DAFB",
+    "C++": "#5C9FE0",
+    "Java": "#ED8B00",
+    "Rust": "#E8590C",
+    "SQL": "#4479A1",
+    "Go": "#00ADD8",
+}
+
+
+def hex_to_rgba(hex_color: str, alpha: float = 0.15) -> str:
+    """Convert a #RRGGBB color into an rgba(...) string at the given alpha,
+    used to build tinted backgrounds/borders that match a solid accent."""
+    hex_color = hex_color.lstrip("#")
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+    return f"rgba({r}, {g}, {b}, {alpha})"
+
 
 # ============================================================
 #  HELPERS: extracting and diffing code
@@ -782,9 +884,9 @@ _avg_time = (
 st.markdown(
     f"""
     <div class='stats-row'>
-        <div class='stat-chip'>diagnoses this session<b>{_total_diagnoses}</b></div>
-        <div class='stat-chip'>tokens spent<b>{_tokens_spent}</b></div>
-        <div class='stat-chip'>avg response time<b>{_avg_time:.1f}s</b></div>
+        <div class='stat-chip c-amber'>diagnoses this session<b>{_total_diagnoses}</b></div>
+        <div class='stat-chip c-violet'>tokens spent<b>{_tokens_spent}</b></div>
+        <div class='stat-chip c-teal'>avg response time<b>{_avg_time:.1f}s</b></div>
     </div>
     """,
     unsafe_allow_html=True
@@ -813,16 +915,17 @@ with left_col:
     code_val = sample_code if sample_code else ""
     err_val = sample_err if sample_err else ""
 
+    lang_color = LANGUAGE_COLORS.get(language, "#F2A93B")
     st.markdown(
         f"""
-        <div class="mac-header">
+        <div class="mac-header" style="border-top: 3px solid {lang_color};">
             <div class="mac-dots">
                 <span class="mac-btn mac-close"></span>
                 <span class="mac-btn mac-min"></span>
                 <span class="mac-btn mac-max"></span>
                 <span class="mac-title">source</span>
             </div>
-            <div class="mac-status-tag">{language.split()[0].upper()}</div>
+            <div class="mac-status-tag" style="color:{lang_color}; background:{hex_to_rgba(lang_color, 0.16)}; border-color:{hex_to_rgba(lang_color, 0.4)};">{language.split()[0].upper()}</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -1068,11 +1171,12 @@ with right_col:
             for entry in st.session_state.history:
                 preview = html.escape(entry["code_preview"])
                 ellipsis = "…" if len(entry["code_preview"]) >= 120 else ""
+                entry_color = LANGUAGE_COLORS.get(entry["language"], "#F2A93B")
                 st.markdown(
                     f"""
-                    <div class='history-card'>
+                    <div class='history-card' style="border-left: 3px solid {entry_color};">
                         <div class='history-meta'>
-                            <span class='history-lang'>{html.escape(entry["language"])}</span>
+                            <span class='history-lang' style="color:{entry_color}; background:{hex_to_rgba(entry_color, 0.16)};">{html.escape(entry["language"])}</span>
                             <span class='history-time'>{entry["timestamp"]} · {entry["elapsed"]:.1f}s · {entry["tokens_remaining"]} left</span>
                         </div>
                         <div class='history-preview'>{preview}{ellipsis}</div>
